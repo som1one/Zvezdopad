@@ -18,15 +18,25 @@ export default function AdminDealsPage() {
 
   const installmentDeals = useMemo(() => {
     if (!deals) return [];
-    // ВАЖНО: список уже приходит из Bitrix как "TYPE_PAYMENT=Рассрочка",
-    // поэтому не фильтруем по term_months (он может быть 0 до настройки/синхронизации UF-поля).
-    // Оставляем только базовую проверку на сумму рассрочки > 0.
-    return deals.filter((d) => {
-      const totalAmount = Number(d.total_amount) || 0;
-      const initialPayment = Number(d.initial_payment) || 0;
-      const installmentAmount = Math.max(0, totalAmount - initialPayment);
-      return installmentAmount > 0;
+    
+    // ОТЛАДКА: логируем все сделки для диагностики
+    console.log("🔍 Все сделки из API:", deals);
+    console.log("🔍 Количество сделок:", deals.length);
+    
+    // Показываем ВСЕ сделки из Bitrix24 (они уже отфильтрованы по TYPE_PAYMENT=Рассрочка)
+    // Не фильтруем по сумме, так как сделки могут быть еще не настроены
+    const filtered = deals.filter((d) => {
+      // Показываем все сделки, которые есть в списке
+      // Если total_amount = 0 или не установлен, все равно показываем
+      return true;
     });
+    
+    console.log("🔍 После фильтрации:", filtered.length);
+    if (filtered.length === 0 && deals.length > 0) {
+      console.warn("⚠️ Все сделки отфильтрованы! Примеры:", deals.slice(0, 3));
+    }
+    
+    return filtered;
   }, [deals]);
 
   const filteredDeals = useMemo(() => {

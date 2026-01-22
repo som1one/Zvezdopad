@@ -15,10 +15,27 @@ export function useDeals() {
     setError(null);
     try {
       const data = await getDeals();
+      console.log("📥 Данные от API /api/admin/deals:", data);
+      console.log("📥 Тип данных:", Array.isArray(data) ? "массив" : typeof data);
+      console.log("📥 Количество:", Array.isArray(data) ? data.length : "не массив");
+      
+      if (!Array.isArray(data)) {
+        console.error("❌ API вернул не массив:", data);
+        setError("Сервер вернул неверный формат данных");
+        setDeals([]);
+        return;
+      }
+      
       setDeals(data);
+      console.log("✅ Сделки загружены:", data.length);
     } catch (err) {
       setError(err.message || "Ошибка загрузки сделок");
-      console.error("deals_load_error", { error: err.message });
+      console.error("❌ deals_load_error", { 
+        error: err.message,
+        stack: err.stack,
+        response: err.response
+      });
+      setDeals([]);
     } finally {
       setLoading(false);
     }
