@@ -69,8 +69,14 @@ def get_all_deals(
         db_deals_dict = {deal.deal_id: deal for deal in db_deals}
         logger.info(f"Found {len(db_deals)} deals in local DB")
         
-        # Объединяем данные
+        # Создаем словарь для быстрого поиска сделок из Bitrix24
+        bitrix_deals_dict = {deal.get("ID"): deal for deal in bitrix_deals if deal.get("ID")}
+        
+        # Объединяем данные: сначала из Bitrix24, потом добавляем те, что есть только в БД
         result = []
+        processed_deal_ids = set()
+        
+        # 1. Обрабатываем сделки из Bitrix24
         for bitrix_deal in bitrix_deals:
             deal_id = bitrix_deal.get("ID")
             db_deal = db_deals_dict.get(deal_id)
@@ -149,8 +155,73 @@ def get_all_deals(
                 "company_id": bitrix_deal.get("COMPANY_ID"),
                 "category_id": bitrix_deal.get("CATEGORY_ID")
             })
+            processed_deal_ids.add(deal_id)
         
-        logger.info(f"Returning {len(result)} deals to admin")
+        # 2. Добавляем сделки из БД, которых нет в Bitrix24 (или которые не прошли фильтр)
+        for db_deal in db_deals:
+            deal_id = db_deal.deal_id
+            if deal_id in processed_deal_ids:
+                continue  # Уже обработана
+            
+            # Если сделки нет в Bitrix24, все равно показываем её из БД
+            logger.info(f"Deal {deal_id} found in DB but not in Bitrix24 list, adding from DB")
+            
+            # Пытаемся получить данные из Bitrix24 напрямую (может быть, просто не прошла фильтр)
+            full_deal = None
+            try:
+                import bitrix.client as bitrix_client
+                full_deal = bitrix_client._get_full_deal(deal_id)
+            except Exception as e:
+                logger.debug(f"Could not fetch deal {deal_id} from Bitrix24: {e}")
+                full_deal = None
+            
+            # Используем данные из БД как источник истины
+            total_amount = db_deal.total_amount or 0
+            paid_amount = db_deal.paid_amount or 0
+            term_months = db_deal.term_months or 0
+            initial_payment = int(getattr(db_deal, "initial_payment", 0) or 0)
+            
+            # Если в Bitrix24 есть данные, используем их для title и других полей
+            title = db_deal.title or ""
+            if full_deal:
+                title = full_deal.get("TITLE") or title
+            
+            # Определяем статус
+            if total_amount > 0 and paid_amount >= total_amount:
+                deal_status = "paid"
+            elif paid_amount > 0:
+                deal_status = "active"
+            elif total_amount > 0:
+                deal_status = "pending"
+            else:
+                deal_status = "active"
+            
+            result.append({
+                "deal_id": deal_id,
+                "title": title,
+                "email": db_deal.email,
+                "total_amount": total_amount,
+                "paid_amount": paid_amount,
+                "initial_payment": initial_payment,
+                "remaining_amount": max(0, total_amount - paid_amount),
+                "term_months": term_months,
+                "status": deal_status,
+                # Дополнительные поля из Bitrix24 (если есть) или пустые
+                "contact_id": full_deal.get("CONTACT_ID") if full_deal else None,
+                "assigned_by_id": full_deal.get("ASSIGNED_BY_ID") if full_deal else None,
+                "stage_id": full_deal.get("STAGE_ID") if full_deal else None,
+                "date_create": full_deal.get("DATE_CREATE") if full_deal else None,
+                "date_modify": full_deal.get("DATE_MODIFY") if full_deal else None,
+                "begindate": full_deal.get("BEGINDATE") if full_deal else None,
+                "closedate": full_deal.get("CLOSEDATE") if full_deal else None,
+                "currency_id": full_deal.get("CURRENCY_ID", "RUB") if full_deal else "RUB",
+                "comments": full_deal.get("COMMENTS") if full_deal else None,
+                "source_id": full_deal.get("SOURCE_ID") if full_deal else None,
+                "company_id": full_deal.get("COMPANY_ID") if full_deal else None,
+                "category_id": full_deal.get("CATEGORY_ID") if full_deal else None
+            })
+        
+        logger.info(f"Returning {len(result)} deals to admin ({len(bitrix_deals)} from Bitrix24, {len(db_deals)} from DB)")
         return result
         
     except Exception as e:
