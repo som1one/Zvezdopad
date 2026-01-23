@@ -158,13 +158,15 @@ def get_all_deals(
             processed_deal_ids.add(deal_id)
         
         # 2. Добавляем сделки из БД, которых нет в Bitrix24 (или которые не прошли фильтр)
+        db_only_count = 0
         for db_deal in db_deals:
             deal_id = db_deal.deal_id
             if deal_id in processed_deal_ids:
                 continue  # Уже обработана
             
             # Если сделки нет в Bitrix24, все равно показываем её из БД
-            logger.info(f"Deal {deal_id} found in DB but not in Bitrix24 list, adding from DB")
+            logger.info(f"Deal {deal_id} found in DB but not in Bitrix24 list, adding from DB (title: {db_deal.title}, total: {db_deal.total_amount}, term: {db_deal.term_months})")
+            db_only_count += 1
             
             # Пытаемся получить данные из Bitrix24 напрямую (может быть, просто не прошла фильтр)
             full_deal = None
@@ -185,6 +187,15 @@ def get_all_deals(
             title = db_deal.title or ""
             if full_deal:
                 title = full_deal.get("TITLE") or title
+                # Если в Bitrix24 есть сумма, но в БД нет, используем из Bitrix24
+                if total_amount == 0 and full_deal.get("OPPORTUNITY"):
+                    total_amount = parse_money_to_int(full_deal.get("OPPORTUNITY"))
+                # Если в Bitrix24 есть срок, но в БД нет, используем из Bitrix24
+                if term_months == 0 and full_deal.get("UF_TERM_MONTHS"):
+                    term_months = parse_int(full_deal.get("UF_TERM_MONTHS"))
+                # Если в Bitrix24 есть оплата, но в БД нет, используем из Bitrix24
+                if paid_amount == 0 and full_deal.get("UF_PAID_AMOUNT"):
+                    paid_amount = parse_money_to_int(full_deal.get("UF_PAID_AMOUNT"))
             
             # Определяем статус
             if total_amount > 0 and paid_amount >= total_amount:
@@ -221,7 +232,7 @@ def get_all_deals(
                 "category_id": full_deal.get("CATEGORY_ID") if full_deal else None
             })
         
-        logger.info(f"Returning {len(result)} deals to admin ({len(bitrix_deals)} from Bitrix24, {len(db_deals)} from DB)")
+        logger.info(f"Returning {len(result)} deals to admin ({len(bitrix_deals)} from Bitrix24 filter, {db_only_count} from DB only, {len(db_deals)} total in DB)")
         return result
         
     except Exception as e:
