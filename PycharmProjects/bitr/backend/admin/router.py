@@ -121,7 +121,9 @@ def get_all_deals(
         
         # 1. Обрабатываем сделки из Bitrix24
         for bitrix_deal in bitrix_deals:
-            deal_id = bitrix_deal.get("ID")
+            deal_id = str(bitrix_deal.get("ID")) if bitrix_deal.get("ID") else None
+            if not deal_id:
+                continue
             db_deal = db_deals_dict.get(deal_id)
             
             # ВАЖНО: crm.deal.list может не отдавать UF_* поля (term/paid и т.д.).
@@ -203,7 +205,9 @@ def get_all_deals(
         # 2. Добавляем сделки из БД, которых нет в Bitrix24 (или которые не прошли фильтр)
         db_only_count = 0
         for db_deal in db_deals:
-            deal_id = db_deal.deal_id
+            deal_id = str(db_deal.deal_id) if db_deal.deal_id else None
+            if not deal_id:
+                continue
             if deal_id in processed_deal_ids:
                 continue  # Уже обработана
             
