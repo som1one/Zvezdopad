@@ -482,41 +482,61 @@ def get_all_installment_deals() -> List[Dict[str, Any]]:
     """
     try:
         deal_url = f"{settings.BITRIX_WEBHOOK_URL}/crm.deal.list"
-        deal_payload = {
-            "filter": {
-                "TYPE_PAYMENT": "Рассрочка"
-            },
-            "select": [
-                "ID",
-                "TITLE",
-                "OPPORTUNITY",
-                "CONTACT_ID",
-                "ASSIGNED_BY_ID",
-                "STAGE_ID",
-                "DATE_CREATE",
-                "DATE_MODIFY",
-                "BEGINDATE",
-                "CLOSEDATE",
-                "CURRENCY_ID",
-                # ВАЖНО: UF_TERM_MONTHS и UF_PAID_AMOUNT НЕ возвращаются в crm.deal.list
-                # Это особенность Bitrix24 API - пользовательские поля часто не включены в список
-                # Для получения этих полей нужно использовать crm.deal.get для каждой сделки
-                # Однако, мы используем локальную БД как источник истины для этих полей
-                "COMMENTS",
-                "SOURCE_ID",
-                "COMPANY_ID",
-                "CATEGORY_ID"
-            ],
-            "order": {"DATE_CREATE": "DESC"}
-        }
+        all_deals = []
+        start = 0
+        limit = 50  # Bitrix24 по умолчанию возвращает 50 записей
         
         logger.info(f"Получаем все сделки с типом 'Рассрочка' из Bitrix24. URL: {deal_url}")
-        deal_res = requests.post(deal_url, json=deal_payload, timeout=30)
-        deal_res.raise_for_status()
-        deal_data = deal_res.json()
-        logger.info(f"Ответ Bitrix24: найдено {len(deal_data.get('result', []))} сделок")
         
-        return deal_data.get("result", [])
+        while True:
+            deal_payload = {
+                "filter": {
+                    "TYPE_PAYMENT": "Рассрочка"
+                },
+                "select": [
+                    "ID",
+                    "TITLE",
+                    "OPPORTUNITY",
+                    "CONTACT_ID",
+                    "ASSIGNED_BY_ID",
+                    "STAGE_ID",
+                    "DATE_CREATE",
+                    "DATE_MODIFY",
+                    "BEGINDATE",
+                    "CLOSEDATE",
+                    "CURRENCY_ID",
+                    # ВАЖНО: UF_TERM_MONTHS и UF_PAID_AMOUNT НЕ возвращаются в crm.deal.list
+                    # Это особенность Bitrix24 API - пользовательские поля часто не включены в список
+                    # Для получения этих полей нужно использовать crm.deal.get для каждой сделки
+                    # Однако, мы используем локальную БД как источник истины для этих полей
+                    "COMMENTS",
+                    "SOURCE_ID",
+                    "COMPANY_ID",
+                    "CATEGORY_ID"
+                ],
+                "order": {"DATE_CREATE": "DESC"},
+                "start": start
+            }
+            
+            deal_res = requests.post(deal_url, json=deal_payload, timeout=30)
+            deal_res.raise_for_status()
+            deal_data = deal_res.json()
+            
+            deals_batch = deal_data.get("result", [])
+            if not deals_batch:
+                break
+            
+            all_deals.extend(deals_batch)
+            logger.info(f"Получено {len(deals_batch)} сделок (всего: {len(all_deals)})")
+            
+            # Если получено меньше limit, значит это последняя страница
+            if len(deals_batch) < limit:
+                break
+            
+            start += limit
+        
+        logger.info(f"Всего найдено {len(all_deals)} сделок с типом 'Рассрочка' в Bitrix24")
+        return all_deals
         
     except requests.Timeout as e:
         logger.error(
