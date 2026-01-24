@@ -48,6 +48,49 @@ class DealResponse(BaseModel):
     term_months: int
     status: str  # "active", "paid", "overdue"
 
+@router.get("/deals/debug")
+def get_all_deals_debug(
+    db: Session = Depends(get_db),
+    user = Depends(require_admin)
+):
+    """
+    Отладочный endpoint для проверки данных.
+    """
+    logger.info(f"Admin {user.email} requested debug info")
+    
+    try:
+        # Получаем все сделки из БД
+        db_deals = db.query(Deal).all()
+        db_deals_list = []
+        for deal in db_deals:
+            db_deals_list.append({
+                "deal_id": deal.deal_id,
+                "title": deal.title,
+                "email": deal.email,
+                "total_amount": deal.total_amount,
+                "paid_amount": deal.paid_amount,
+                "term_months": deal.term_months,
+                "initial_payment": getattr(deal, "initial_payment", 0),
+            })
+        
+        # Получаем все рассрочки из Bitrix24
+        bitrix_deals = get_all_installment_deals()
+        bitrix_ids = [d.get("ID") for d in bitrix_deals if d.get("ID")]
+        
+        return {
+            "db_deals_count": len(db_deals),
+            "db_deals": db_deals_list,
+            "bitrix_deals_count": len(bitrix_deals),
+            "bitrix_deal_ids": bitrix_ids,
+            "db_only_deals": [d for d in db_deals_list if d["deal_id"] not in bitrix_ids],
+        }
+    except Exception as e:
+        logger.error(f"Error in debug endpoint: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Ошибка: {str(e)}"
+        )
+
 @router.get("/deals")
 def get_all_deals(
     db: Session = Depends(get_db),
