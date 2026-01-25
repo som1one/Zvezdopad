@@ -317,31 +317,6 @@ export default function AdminDealsPage() {
             </button>
           </div>
         </div>
-          <div className="flex gap-3">
-            <button 
-              onClick={handleTestWebhook}
-              disabled={testingWebhook}
-              className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <TestTube className="w-4 h-4" />
-              {testingWebhook ? "Проверка..." : "Тест webhook"}
-            </button>
-            <button 
-              onClick={handleExport}
-              className="px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 font-medium"
-            >
-              <Download className="w-4 h-4" />
-              Экспорт
-            </button>
-            <button 
-              onClick={() => setShowClearConfirm(true)}
-              className="px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2 font-medium"
-            >
-              <Trash2 className="w-4 h-4" />
-              Очистить БД
-            </button>
-          </div>
-        </div>
 
         {/* Статистика */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
