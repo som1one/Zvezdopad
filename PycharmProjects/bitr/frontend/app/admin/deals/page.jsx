@@ -3,7 +3,7 @@
 import { useDeals } from "@/modules/admin/deals/hooks";
 import DealsTable from "@/components/admin/DealsTable";
 import { Loader, ErrorState, EmptyState } from "@/components/ui/State";
-import { ClipboardList, DollarSign, Wallet, Banknote, Search, Download, TestTube, Trash2 } from "lucide-react";
+import { ClipboardList, DollarSign, Wallet, Banknote, Search, Download, TestTube, Trash2, Filter } from "lucide-react";
 import { useMemo, useState } from "react";
 import { testWebhook } from "@/modules/admin/payments/api";
 import { clearDatabase } from "@/modules/admin/deals/api";
@@ -11,6 +11,7 @@ import { clearDatabase } from "@/modules/admin/deals/api";
 export default function AdminDealsPage() {
   const { deals, loading, error, refetch } = useDeals();
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState("all"); // "all", "installment", "configured", "not_configured"
   const [testingWebhook, setTestingWebhook] = useState(false);
   const [webhookTestResult, setWebhookTestResult] = useState(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -23,21 +24,38 @@ export default function AdminDealsPage() {
     console.log("🔍 Все сделки из API:", deals);
     console.log("🔍 Количество сделок:", deals.length);
     
-    // Показываем ВСЕ сделки из Bitrix24 (они уже отфильтрованы по TYPE_PAYMENT=Рассрочка)
-    // Не фильтруем по сумме, так как сделки могут быть еще не настроены
+    // Применяем фильтр по типу
     const filtered = deals.filter((d) => {
-      // Показываем все сделки, которые есть в списке
-      // Если total_amount = 0 или не установлен, все равно показываем
-      return true;
+      const totalAmount = Number(d.total_amount) || 0;
+      const initialPayment = Number(d.initial_payment) || 0;
+      const termMonths = Number(d.term_months) || 0;
+      const installmentAmount = Math.max(0, totalAmount - initialPayment);
+      const isConfigured = installmentAmount > 0 && termMonths > 0;
+      
+      switch (filterType) {
+        case "installment":
+          // Только рассрочки (есть сумма рассрочки)
+          return installmentAmount > 0;
+        case "configured":
+          // Только настроенные (есть сумма и срок)
+          return isConfigured;
+        case "not_configured":
+          // Только не настроенные (нет суммы или срока)
+          return !isConfigured;
+        case "all":
+        default:
+          // Все сделки
+          return true;
+      }
     });
     
-    console.log("🔍 После фильтрации:", filtered.length);
+    console.log("🔍 После фильтрации:", filtered.length, `(фильтр: ${filterType})`);
     if (filtered.length === 0 && deals.length > 0) {
       console.warn("⚠️ Все сделки отфильтрованы! Примеры:", deals.slice(0, 3));
     }
     
     return filtered;
-  }, [deals]);
+  }, [deals, filterType]);
 
   const filteredDeals = useMemo(() => {
     if (!installmentDeals) return [];
@@ -215,17 +233,90 @@ export default function AdminDealsPage() {
         )}
 
         {/* Поиск и фильтры */}
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Поиск по имени или email..."
-              className="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            />
+        <div className="mb-6 space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Поиск по имени или email..."
+                className="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+            <div className="flex gap-3">
+              <button 
+                onClick={handleTestWebhook}
+                disabled={testingWebhook}
+                className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <TestTube className="w-4 h-4" />
+                {testingWebhook ? "Проверка..." : "Тест webhook"}
+              </button>
+              <button 
+                onClick={handleExport}
+                className="px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 font-medium"
+              >
+                <Download className="w-4 h-4" />
+                Экспорт
+              </button>
+              <button 
+                onClick={() => setShowClearConfirm(true)}
+                className="px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2 font-medium"
+              >
+                <Trash2 className="w-4 h-4" />
+                Очистить БД
+              </button>
+            </div>
           </div>
+          
+          {/* Фильтр по типу рассрочки */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <Filter className="w-5 h-5 text-slate-400" />
+            <span className="text-sm text-slate-400 font-medium">Фильтр:</span>
+            <button
+              onClick={() => setFilterType("all")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filterType === "all"
+                  ? "bg-purple-600 text-white"
+                  : "bg-slate-800/50 text-slate-300 hover:bg-slate-700 border border-slate-700"
+              }`}
+            >
+              Все сделки
+            </button>
+            <button
+              onClick={() => setFilterType("installment")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filterType === "installment"
+                  ? "bg-purple-600 text-white"
+                  : "bg-slate-800/50 text-slate-300 hover:bg-slate-700 border border-slate-700"
+              }`}
+            >
+              С рассрочкой
+            </button>
+            <button
+              onClick={() => setFilterType("configured")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filterType === "configured"
+                  ? "bg-purple-600 text-white"
+                  : "bg-slate-800/50 text-slate-300 hover:bg-slate-700 border border-slate-700"
+              }`}
+            >
+              Настроенные
+            </button>
+            <button
+              onClick={() => setFilterType("not_configured")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filterType === "not_configured"
+                  ? "bg-purple-600 text-white"
+                  : "bg-slate-800/50 text-slate-300 hover:bg-slate-700 border border-slate-700"
+              }`}
+            >
+              Не настроенные
+            </button>
+          </div>
+        </div>
           <div className="flex gap-3">
             <button 
               onClick={handleTestWebhook}
