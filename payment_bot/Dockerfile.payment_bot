@@ -1,0 +1,28 @@
+# Находится в /root/zvezdopad_new/payment_bot/Dockerfile.payment_bot
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Копируем файл зависимостей ПЛАТЕЖНОГО бота.
+# Контекст сборки - /root/zvezdopad_new/
+# Поэтому путь к файлу должен быть payment_bot/requirements.payment.txt
+COPY payment_bot/requirements.payment.txt .
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.payment.txt
+
+# Копируем код самого платежного бота
+COPY payment_bot/payment_bot_main.py .
+COPY payment_bot/payment_bot_settings.py .
+COPY payment_bot/payment_bot_keyboards.py .
+COPY payment_bot/payment_bot_states.py .
+
+# Копируем ОБЩИЕ модули из КОРНЯ ПРОЕКТА в корень /app контейнера платежного бота.
+COPY database.py .
+COPY utils.py .
+COPY texts.py .
+COPY settings.py .
+# Если основной settings.py тоже нужен (например, для общих констант, но не токенов!),
+# то можно скопировать и его. Но лучше, чтобы у платежного бота был свой payment_bot_settings.py.
+# COPY settings.py .
+
+CMD ["python", "payment_bot_main.py"]

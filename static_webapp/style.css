@@ -1,0 +1,1839 @@
+:root {
+  --bg-grad-1: #1e3c72;
+  --bg-grad-2: #2a5298;
+  --bg-grad-3: #ee7752;
+  --bg-grad-4: #e73c7e;
+  --bg-grad-5: #23a6d5;
+  --bg-grad-6: #23d5ab;
+  /* --container-bg: rgba(255, 255, 255, 0.98); - Заменено или не используется в новой структуре */
+  /* --container-border: rgba(0, 0, 0, 0.08); - Заменено или не используется в новой структуре */
+  /* --shadow-color: rgba(0, 0, 0, 0.25); - Может быть специфичным, оставлено если нужно */
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.2);
+  --primary-purple: #7e57c2; /* Пример, если не используется тема TG, или для элементов вне TG-стилизации */
+  /* --primary-purple-dark: #6b44af; - Можно оставить, если используется где-то отдельно */
+  /* --primary-purple-light: #b39ddb; - Можно оставить */
+  /* --primary-purple-bg: #ede7f6; - Можно оставить */
+  /* --primary-purple-text: #5e35b1; - Можно оставить */
+  /* --primary-purple-border: #6a1b9a; - Можно оставить */
+  --accent-pink: #fc5c7d;
+  /* --accent-blue: #6a82fb; - Можно оставить */
+  --accent-gold: #ffc107;
+  --accent-gold-dark: #e0a800;
+  /* --accent-gold-shadow: rgba(255, 193, 7, 0.6); - Можно оставить */
+  /* --text-dark: #212121; - Заменено TG переменными */
+  /* --text-medium: #424242; - Заменено TG переменными */
+  /* --text-light: #616161; - Заменено TG переменными */
+  /* --text-link: #4094ff; - Заменено TG переменными */
+  /* --text-white: #fff; - Заменено TG переменными */
+  /* --text-disabled: #9e9e9e; - Обновлено */
+  --font-main: 'Montserrat', sans-serif;
+  --vh: 1vh; /* Для корректной высоты на мобильных */
+
+  /* Переменные темы Telegram с фоллбэками */
+  --app-bg-color: var(--tg-theme-bg-color, #eef2f5); /* Фоллбэк на светлый нейтральный фон */
+  --secondary-bg-color: var(--tg-theme-secondary-bg-color, #ffffff);
+  --text-color-main: var(--tg-theme-text-color, #000000);
+  --text-color-secondary: var(--tg-theme-hint-color, #707579);
+  --text-color-link: var(--tg-theme-link-color, #2481cc);
+  --button-bg-color: var(--tg-theme-button-color, #5288c1);
+  --button-text-color: var(--tg-theme-button-text-color, #ffffff);
+  --header-bg-color: var(--tg-theme-header-bg-color, var(--secondary-bg-color));
+  --section-bg-color: var(--tg-theme-section-bg-color, var(--secondary-bg-color));
+  --section-header-text-color: var(--tg-theme-section-header-text-color, var(--text-color-main));
+  --destructive-text-color: var(--tg-theme-destructive-text-color, #d14e4e);
+  --accent-text-color: var(--tg-theme-accent-text-color, var(--text-color-link));
+  --border-color: rgba(0, 0, 0, 0.08); /* Можно настроить на основе --tg-theme-hint-color */
+  --button-disabled-bg-color: #c1c9d1;
+  --text-disabled: #8a939c;
+  /* --card-bg-color: var(--secondary-bg-color); /* Пример, если --card-bg-color должен быть стандартным фоном секций */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent; /* Убирает синее выделение при тапе на мобильных */
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--app-bg-color);
+  color: var(--text-color-main);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px; /* Базовый размер шрифта */
+}
+
+body {
+  /* font-family: var(--font-main); - Уже в html, body */
+  display: flex; /* Для центрирования #appContainer, если он меньше body */
+  justify-content: center;
+  align-items: flex-start; /* или center, если #appContainer должен быть по центру вертикально */
+  /* color: var(--text-color-main); - Уже в html, body */
+  /* -webkit-font-smoothing: antialiased; - Уже в html, body */
+  /* -moz-osx-font-smoothing: grayscale; - Уже в html, body */
+}
+
+#appContainer {
+  background: var(--app-bg-color);
+  width: 100%;
+  /* max-width: 100%; - Уже установлено width: 100% */
+  height: 100vh;
+  max-height: calc(var(--vh, 1vh) * 100);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+}
+#appContainer.loading { opacity: 0.7; pointer-events: none; }
+#appContainer.error { border-top: 2px solid var(--destructive-text-color); }
+#appContainer.loading #spinBtn { background: var(--button-disabled-bg-color); color: var(--text-disabled); cursor: default; }
+#appContainer.loading #balanceValue,
+#appContainer.loading #freeSpinInfoPlaque { color: #aaa; } /* Можно заменить на var(--text-disabled) или специфичную переменную */
+/* #appContainer.error .error-message { display: block; } - Заменено/переопределено через #errorMessage */
+
+
+#balancePlaque {
+  background-color: var(--secondary-bg-color); /* Используем TG переменную или section-bg-color */
+  border-radius: 12px;
+  box-shadow: 0 3px 8px var(--shadow-light);
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.balanceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#balanceInfo {
+  font-size: 15px;
+  color: var(--text-color-secondary);
+  line-height: 1.3;
+  text-align: left;
+  flex-grow: 1;
+}
+#balanceInfo .balanceLabel {
+  font-weight: 600;
+  margin-right: 5px;
+  display: inline-block;
+  color: var(--text-color-main);
+}
+
+#balanceValue {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--button-bg-color); /* Или var(--accent-text-color) для выделения */
+}
+
+#freeSpinInfoPlaque {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  line-height: 1.4;
+  margin-top: 5px;
+  background-color: rgba(0, 0, 0, 0.03); /* Или более светлый оттенок var(--secondary-bg-color) */
+  color: var(--text-color-secondary);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+#freeSpinInfoPlaque.available {
+  color: var(--accent-gold-dark);
+  background-color: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.3);
+}
+#freeSpinInfoPlaque.cooldown {
+  color: var(--text-color-secondary);
+  background-color: rgba(0, 0, 0, 0.03);
+  border-color: var(--border-color);
+}
+
+#outerRing {
+  position: relative;
+  width: min(75vw, 320px);
+  padding-bottom: min(75vw, 320px);
+  height: 0;
+  margin: 10px auto 15px;
+  border-radius: 50%;
+  background-color: var(--text-color-link); /* Или var(--button-bg-color) */
+  box-shadow: 0 8px 20px var(--shadow-medium), inset 0 0 15px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  transition: box-shadow 0.4s ease-in-out;
+}
+#outerRing.stopping { box-shadow: 0 15px 35px var(--shadow-medium), inset 0 0 25px rgba(0, 0, 0, 0.4); } /* --shadow-color заменен на --shadow-medium или другой подходящий */
+#outerRing.vibrate { animation: vibrate 0.4s linear; }
+
+@keyframes vibrate {
+  0%, 50%, 100% { transform: translateX(0) rotate(0); }
+  25% { transform: translateX(2px); }
+  75% { transform: translateX(-2px); }
+}
+
+#wheelContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+  border-radius: 50%;
+  background: var(--card-bg-color); /* Убедитесь, что --card-bg-color определена или заменена */
+  box-shadow: inset 0 0 12px var(--shadow-medium), 0 3px 6px var(--shadow-light);
+  overflow: hidden;
+}
+
+#wheel {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: transparent;
+  transform: rotate(0deg);
+  will-change: transform;
+  transition: filter 0.4s ease-in-out;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+#wheel.spinning { filter: blur(1.5px); }
+
+#topPointer {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  width: 0;
+  height: 0;
+  border-left: clamp(15px, 4vw, 25px) solid transparent;
+  border-right: clamp(15px, 4vw, 25px) solid transparent;
+  border-bottom: clamp(25px, 7vw, 40px) solid var(--button-bg-color);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  z-index: 3;
+  animation: pulse 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(180deg) scale(1); }
+  50% { transform: translateX(-50%) translateY(-8px) rotate(180deg) scale(1.05); }
+}
+
+#centerDisc {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(50px, 18vw, 80px);
+  height: clamp(50px, 18vw, 80px);
+  border-radius: 50%;
+  background: var(--card-bg-color); /* Убедитесь, что --card-bg-color определена или заменена */
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.08), 0 4px 8px var(--shadow-light);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--button-bg-color);
+  transition: transform 0.2s ease, background 0.3s ease;
+  cursor: default;
+}
+#centerDisc.free-spin-active {
+  background: radial-gradient(circle at 60% 40%, #fffde7, #fff8e1);
+  color: var(--accent-gold-dark);
+}
+#centerDisc .cost-value,
+#centerDisc .cost-label {
+  font-size: clamp(18px, 5vw, 26px);
+  font-weight: 700;
+  line-height: 1.1;
+  display: block;
+}
+#centerDisc .cost-star,
+#centerDisc .cost-sublabel {
+  font-size: clamp(14px, 3.5vw, 18px);
+  line-height: 1;
+  display: block;
+}
+#centerDisc.clicked { transform: translate(-50%, -50%) scale(0.95); }
+
+hr.divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 20px 0;
+}
+
+#controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 15px;
+  gap: 15px;
+}
+
+#spinCostBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+  transition: opacity 0.3s ease;
+}
+#spinCostBlock p:first-child {
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-color-main);
+}
+
+.costBtns {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.costBtn {
+  padding: 8px 15px;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  background: var(--card-bg-color); /* Убедитесь, что --card-bg-color определена или заменена, возможно var(--secondary-bg-color) */
+  color: var(--text-color-link);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.costBtn.active {
+  background: var(--button-bg-color);
+  color: var(--button-text-color);
+  border-color: var(--button-bg-color);
+  transform: scale(1.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.costBtn:hover:not(.active):not(:disabled) { background-color: rgba(0, 0, 0, 0.05); }
+.costBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--button-disabled-bg-color);
+  color: var(--text-disabled);
+  transform: scale(1);
+  box-shadow: none;
+  border-color: transparent;
+}
+.costBtn:disabled:hover { background: var(--button-disabled-bg-color); }
+
+#spinCostBlock .cost-description {
+  font-size: 12px;
+  margin-top: 8px;
+  text-align: center;
+  color: var(--text-color-secondary);
+  line-height: 1.3;
+  padding: 0 5px;
+}
+#spinCostBlock .cost-description a {
+  color: var(--text-color-link);
+  text-decoration: none;
+  font-weight: 600;
+}
+#spinCostBlock .cost-description a:hover { text-decoration: underline; }
+
+#prizeActionBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--card-bg-color); /* Убедитесь, что --card-bg-color определена или заменена */
+  font-size: 13px;
+}
+#prizeActionBlock legend {
+  font-weight: 600;
+  color: var(--text-color-main);
+  margin-bottom: 8px;
+  font-size: 14px;
+  padding: 0 5px;
+}
+
+.prizeActionOptions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.prizeActionOptions label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  color: var(--text-color-main);
+}
+.prizeActionOptions input[type="radio"] {
+  margin-right: 3px;
+  cursor: pointer;
+  accent-color: var(--button-bg-color);
+}
+
+#modeToggleBlock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color-main);
+  gap: 10px;
+  margin-top: 10px;
+}
+#modeLabel { text-align: right; }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc; /* Можно заменить на переменную, например, var(--button-disabled-bg-color) */
+  transition: 0.4s;
+  border-radius: 24px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff; /* Можно заменить на var(--button-text-color) или другой контрастный */
+  transition: 0.4s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+input:checked + .slider { background-color: var(--button-bg-color); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+#spinBtn {
+  margin-top: 20px;
+  padding: 14px 30px;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: var(--button-bg-color);
+  color: var(--button-text-color);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  width: 70%;
+  max-width: 220px;
+}
+#spinBtn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  /* box-shadow: 0 6px 15px rgba(var(--button-bg-color-rgb, 126, 87, 194), 0.4); - --button-bg-color-rgb не определена */
+  box-shadow: 0 6px 15px rgba(82, 136, 193, 0.4); /* Пример с цветом по умолчанию для --button-bg-color */
+  transform: translateY(-3px) scale(1.02);
+}
+#spinBtn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  filter: brightness(0.9);
+}
+#spinBtn:disabled {
+  background: var(--button-disabled-bg-color);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: translateY(0);
+  color: var(--text-disabled);
+}
+
+#spinInfo {
+  margin-top: 15px;
+  text-align: center;
+  color: var(--text-color-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+#spinInfo a {
+  color: var(--text-color-link);
+  text-decoration: none;
+  font-weight: 600;
+}
+#spinInfo a:hover { text-decoration: underline; }
+
+#winOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+}
+#winOverlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+  animation: fadeInOverlay 0.3s ease-out forwards;
+}
+
+@keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOutOverlay { from { opacity: 1; } to { opacity: 0; } }
+
+#winModal {
+  background: var(--card-bg-color); /* Убедитесь, что --card-bg-color определена или заменена */
+  border-radius: 16px;
+  padding: 20px 30px 25px;
+  max-width: 340px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transform: scale(0.8);
+  opacity: 0;
+  cursor: default;
+}
+#winOverlay.visible #winModal {
+  opacity: 1;
+  transform: scale(1);
+  animation: fadeInScale 0.4s 0.1s ease-out forwards;
+}
+
+@keyframes fadeInScale { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes fadeOutScale { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.8); } }
+
+#winModal h2 {
+  margin-bottom: 8px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-color-main);
+}
+#winModal .win-emoji {
+  font-size: 45px;
+  margin: 8px 0;
+  line-height: 1;
+  animation: emojiPop 0.5s ease-out 0.3s;
+}
+
+@keyframes emojiPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+#winModal .win-text {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: var(--text-color-secondary);
+  line-height: 1.4;
+}
+#winModal .win-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+#winModal button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: var(--button-bg-color);
+  color: var(--button-text-color);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+#winModal button.sell-btn {
+  background: var(--accent-gold);
+  color: var(--text-color-main); /* Используем text-color-main для лучшего контраста с золотым */
+}
+#winModal button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  filter: brightness(1.1); /* Общее осветление, вместо 90% */
+}
+#winModal button.sell-btn:hover { background: var(--accent-gold-dark); filter: brightness(1.05); } /* Чуть темнее и ярче */
+#winModal button:active { transform: scale(0.98); filter: brightness(0.9); } /* Общее затемнение при нажатии */
+
+
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 15px;
+  background-color: var(--c, red); /* --c должна быть определена в JS при создании элемента */
+  opacity: 1;
+  animation: confetti-fall 1.8s linear forwards;
+  z-index: 999;
+  border-radius: 3px;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translate(0, 0) rotateZ(0) rotateY(0); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) rotateZ(var(--rz, 360deg)) rotateY(var(--ry, 720deg)); opacity: 0; }
+  /* --dx, --dy, --rz, --ry должны быть определены в JS */
+}
+
+#fireworkCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10001;
+  width: 100%;
+  height: 100%;
+}
+
+#errorMessage { /* Обновлено согласно правкам */
+  color: var(--destructive-text-color); /* Используем переменную темы */
+  font-weight: bold;
+  display: none; /* Управляется JS */
+  background: var(--secondary-bg-color); /* Или более контрастный фон, например, с оттенком destructive-text-color */
+  border: 1px solid var(--destructive-text-color);
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin: 10px 15px; /* Для отступов, если показывается внутри потока */
+  /* Если это глобальное сообщение, позиционирование может быть fixed/absolute */
+}
+
+#tab-content {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-panel {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow-y: auto;
+  padding: 15px; /* Общий отступ для вкладок */
+  z-index: 0;
+  background-color: var(--app-bg-color); /* Фон для вкладок */
+  transform: translateX(30px); /* Начальное смещение для анимации "въезда" */
+}
+
+#target-tab.tab-panel { /* Убираем паддинг, так как он есть у .target-container */
+    padding: 0;
+}
+
+.tab-panel.active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+  transform: translateX(0);
+}
+
+#tab-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch; /* Растягиваем кнопки на всю высоту */
+  height: 60px;
+  background-color: var(--secondary-bg-color); /* Или var(--header-bg-color) */
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.07);
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+  position: relative; /* Для z-index, если необходимо */
+  z-index: 100; /* Чтобы был поверх контента вкладок во время анимации */
+}
+
+.tab-button {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-color-secondary);
+  font-family: var(--font-main);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 5px 2px; /* Немного уменьшил боковые паддинги для компактности */
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.1s ease; /* Добавил transform */
+  height: 100%;
+  position: relative;
+}
+.tab-button .tab-icon {
+  font-size: 22px;
+  margin-bottom: 3px; /* Чуть больше отступ для иконки */
+}
+.tab-button .tab-label {
+  font-weight: 500;
+  line-height: 1.2; /* Улучшение читаемости при переносе */
+}
+.tab-button.active {
+  color: var(--text-color-link);
+  /* font-weight: 600; - Уже есть у .active .tab-label */
+}
+.tab-button.active .tab-label {
+  font-weight: 600;
+}
+.tab-button:hover:not(.active) {
+  color: var(--text-color-link);
+  background-color: rgba(0,0,0,0.03); /* Легкий фон при наведении */
+}
+.tab-button:active { /* :active срабатывает при нажатии */
+  transform: scale(0.96);
+}
+
+
+/* Profile Tab */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* Единый отступ между блоками */
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: var(--section-bg-color);
+  padding: 12px 15px; /* Уменьшил вертикальный паддинг */
+  border-radius: 12px;
+  box-shadow: 0 3px 8px var(--shadow-light);
+  border: 1px solid var(--border-color);
+  /* Анимации применяются через классы loaded/not-loaded */
+}
+
+.profile-avatar {
+  width: 56px; /* Немного меньше */
+  height: 56px;
+  border-radius: 50%;
+  background: var(--button-bg-color); /* Цвет фона для аватара без фото */
+  color: var(--button-text-color); /* Цвет для эмодзи/иконки на аватаре */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  object-fit: cover; /* Для img внутри */
+  position: relative;
+  overflow: hidden; /* Чтобы img не вылезал за круг */
+  border: 1px solid rgba(0,0,0,0.1); /* Тонкая рамка */
+}
+
+.profile-avatar.no-photo {
+    /* background-color: var(--button-bg-color); - Уже есть в .profile-avatar */
+}
+
+.profile-avatar.no-photo::before {
+    content: '👤';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px; /* Адаптируйте размер эмодзи */
+    color: var(--button-text-color);
+    line-height: 1;
+    z-index: 1;
+}
+
+.profile-avatar.no-photo img { /* Скрываем img, если фото нет и показывается плейсхолдер */
+     opacity: 0;
+}
+
+
+.profile-user-info {
+  text-align: left;
+  flex-grow: 1;
+}
+
+#profile-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-color-main);
+  margin-bottom: 2px;
+}
+
+.profile-id {
+  font-size: 12px;
+  color: var(--text-color-secondary);
+}
+.profile-id code {
+  background: rgba(0,0,0,0.04); /* Очень светлый фон для блока с ID */
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 11px; /* Чуть меньше основного текста ID */
+  /* color: var(--text-color-secondary); - Наследуется */
+}
+
+.profile-topup-button-container {
+  flex-shrink: 0;
+  margin-left: auto; /* Прижимает кнопку вправо, если есть место */
+}
+
+.profile-topup-action-button {
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px; /* Уменьшил горизонтальный паддинг для эмодзи + текст */
+  font-size: 14px; /* Размер для эмодзи/иконки, если используется */
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease, filter 0.2s ease;
+  /* min-width: 40px; - Зависит от контента */
+  height: 38px; /* Фиксированная высота */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap; /* Чтобы текст не переносился */
+}
+.profile-topup-action-button .profile-topup-button-text { /* Стиль для текста внутри кнопки */
+  margin-left: 6px; /* Отступ от иконки, если она есть */
+  font-weight: 600;
+  font-size: 13px;
+}
+.profile-topup-action-button:hover {
+  filter: brightness(1.1); /* Осветление при наведении */
+}
+.profile-topup-action-button:active {
+  transform: scale(0.97); /* Небольшое уменьшение при нажатии */
+  filter: brightness(0.95); /* Легкое затемнение */
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Адаптивные колонки */
+  gap: 12px;
+}
+
+.stat-item {
+  background-color: var(--section-bg-color);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 2px 5px var(--shadow-light);
+  border: 1px solid var(--border-color);
+  position: relative; /* Для абсолютно позиционированного прогресс-бара */
+  padding-bottom: 42px; /* Место для прогресс-бара и текста под ним */
+  /* Анимации применяются через классы loaded/not-loaded */
+}
+
+.stat-icon {
+  font-size: 20px;
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text-color-secondary); /* Иконка может быть менее акцентной */
+}
+.stat-value {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent-text-color); /* Акцентный цвет для значения */
+  display: block;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-color-secondary);
+  display: block;
+  margin-top: 3px; /* Отступ от значения */
+}
+
+.stat-progress-wrapper {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  right: 10px;
+}
+
+.stat-progress-text {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  line-height: 1.2;
+  margin-bottom: 3px;
+  pointer-events: none; /* Если не интерактивный */
+}
+
+.stat-progress-container {
+  height: 6px;
+  background-color: rgba(128,128,128,0.15); /* Более светлый фон для трека прогресса */
+  border-radius: 3px; /* Меньшее скругление для тонкого бара */
+  overflow: hidden;
+  /* cursor: help; - Если есть тултип */
+}
+
+.stat-progress-bar {
+  height: 100%;
+  width: 0%; /* Управляется JS */
+  background-color: var(--button-bg-color); /* Цвет прогресса */
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.profile-ref-link-section,
+.profile-withdrawal-status,
+.profile-withdrawal-history {
+  background-color: var(--section-bg-color);
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 2px 5px var(--shadow-light);
+  border: 1px solid var(--border-color);
+  /* Анимации применяются через классы loaded/not-loaded */
+}
+.profile-ref-link-section h3,
+.profile-withdrawal-status h3,
+.profile-withdrawal-history h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--section-header-text-color); /* Цвет заголовка секции */
+  margin-bottom: 12px;
+  text-align: center; /* Повторно, но не вредит */
+}
+
+.ref-link-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Чтобы кнопка копирования была справа */
+  background: rgba(0,0,0,0.03); /* Очень легкий фон */
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  word-break: break-all; /* Для длинных ссылок */
+  border: 1px solid var(--border-color); /* Граница контейнера ссылки */
+}
+#profile-ref-link {
+  flex-grow: 1;
+  text-align: center; /* Или left, если кнопка справа */
+  font-size: 13px;
+  color: var(--text-color-secondary);
+  margin-right: 8px; /* Отступ от кнопки копирования */
+}
+#copy-ref-link-btn {
+  background: none;
+  border: none;
+  font-size: 18px; /* Размер иконки копирования */
+  cursor: pointer;
+  color: var(--text-color-link);
+  padding: 0 4px; /* Небольшие отступы для кликабельности */
+  margin-left: 8px; /* Отступ от текста ссылки, если он слева */
+  flex-shrink: 0; /* Чтобы кнопка не сжималась */
+}
+
+#share-ref-link-btn {
+  background: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.1s ease;
+  width: 100%;
+  max-width: 300px; /* Ограничение ширины кнопки */
+  font-size: 14px;
+}
+#share-ref-link-btn:hover { filter: brightness(1.1); }
+#share-ref-link-btn:active { transform: scale(0.98); filter: brightness(0.95); }
+
+
+#profile-exchange-status {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+#profile-exchange-status.available { color: var(--accent-text-color); } /* Зеленый из темы */
+#profile-exchange-status.unavailable { color: var(--destructive-text-color); } /* Красный из темы */
+
+.profile-withdrawal-status small {
+  font-size: 12px;
+  color: var(--text-color-secondary);
+}
+
+#withdrawal-history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 180px; /* Ограничение высоты для скролла */
+  overflow-y: auto;
+}
+
+.withdrawal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0; /* Уменьшил вертикальный паддинг */
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px; /* Базовый размер шрифта для элемента */
+}
+
+.withdrawal-item:last-child {
+  border-bottom: none;
+}
+
+.withdrawal-date {
+  color: var(--text-color-secondary);
+  flex-basis: 30%; /* Ширина колонки даты */
+  text-align: left;
+  padding-right: 5px;
+}
+
+.withdrawal-amount {
+  color: var(--text-color-main);
+  font-weight: 600;
+  flex-basis: 25%; /* Ширина колонки суммы */
+  text-align: center;
+  padding: 0 5px;
+}
+
+.withdrawal-status {
+  font-weight: 600;
+  flex-basis: 40%; /* Ширина колонки статуса */
+  text-align: right;
+  padding: 2px 5px; /* Паддинги для плашки статуса */
+  border-radius: 5px;
+  font-size: 11px; /* Шрифт для статуса чуть меньше */
+  white-space: nowrap; /* Чтобы статус не переносился */
+}
+/* Цвета для статусов вывода, можно настроить на основе TG переменных, если они есть для success/pending/error */
+.withdrawal-item.status-approved .withdrawal-status {
+  color: #1a6e30; /* Темно-зеленый текст */
+  background-color: #d4edda; /* Светло-зеленый фон */
+}
+.withdrawal-item.status-pending .withdrawal-status {
+  color: #856404; /* Темно-желтый/оранжевый текст */
+  background-color: #fff3cd; /* Светло-желтый фон */
+}
+.withdrawal-item.status-rejected .withdrawal-status {
+  color: #721c24; /* Темно-красный текст */
+  background-color: #f8d7da; /* Светло-красный фон */
+}
+#no-withdrawal-history { /* Для сообщения об отсутствии истории */
+    text-align: center;
+    color: var(--text-color-secondary);
+    padding: 15px 0; /* Отступы, если показывается */
+    font-style: italic;
+    font-size: 13px;
+}
+
+
+#games-tab {
+  position: relative; /* Для позиционирования внутренних контейнеров */
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Чтобы активная игра не вылезала при анимации */
+}
+
+#games-tab .games-container { /* Контейнер для сетки игр */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 15px; /* Отступы для сетки игр */
+  display: block; /* Показывается по умолчанию */
+  opacity: 1;
+  z-index: 1;
+  /* Плавный переход можно добавить, если игры загружаются асинхронно */
+}
+
+#games-tab #active-game-container { /* Контейнер для активной игры */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 15px; /* Отступы для контента игры, если нужны */
+  display: none; /* Скрыт по умолчанию */
+  opacity: 0;
+  z-index: 2; /* Поверх списка игр */
+  background-color: var(--app-bg-color); /* Фон для активной игры */
+  /* Анимация появления может быть добавлена здесь или через JS */
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Две игры в ряд */
+  gap: 15px;
+  margin-bottom: 25px; /* Отступ снизу, если есть что-то еще */
+}
+
+.game-thumbnail {
+  aspect-ratio: 1 / 1; /* Квадратные превью */
+  background-color: var(--card-bg-color); /* Убедитесь, что --card-bg-color определена или заменена */
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  border: 1px solid var(--border-color);
+  overflow: hidden; /* Для ::after и других внутренних элементов */
+  position: relative; /* Для ::after */
+}
+
+.game-thumbnail:hover {
+  transform: translateY(-5px) scale(1.04);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.1);
+}
+
+.game-thumbnail:active {
+   transform: translateY(0) scale(0.98);
+   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.game-icon {
+  font-size: clamp(30px, 10vw, 45px); /* Адаптивный размер иконки */
+  margin-bottom: 8px;
+  line-height: 1;
+  color: var(--button-bg-color); /* Цвет иконки */
+}
+
+.game-title {
+  font-size: clamp(12px, 3.5vw, 14px); /* Адаптивный размер заголовка */
+  font-weight: 600;
+  color: var(--text-color-main);
+  padding: 0 5px; /* Небольшие отступы по бокам, если текст длинный */
+}
+
+.coming-soon-text {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-color-secondary);
+  margin-top: 20px;
+  font-style: italic;
+}
+
+#back-to-games-btn {
+  background: none;
+  border: none;
+  color: var(--text-color-link);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 10px; /* Область клика */
+  margin-bottom: 15px; /* Отступ от контента игры */
+  display: block; /* Или inline-block, в зависимости от верстки */
+  /* text-align: left; или center; */
+}
+#back-to-games-btn:hover {
+  text-decoration: underline;
+}
+
+.game-thumbnail.unavailable {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(80%);
+  pointer-events: none; /* Делает элемент некликабельным */
+}
+
+.game-thumbnail.unavailable:hover { /* Сбрасываем ховер-эффекты для недоступных */
+  transform: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.game-thumbnail.unavailable::after {
+  content: 'Скоро';
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 4px;
+  z-index: 3; /* Поверх контента превью */
+}
+
+#game-content-area .game-loader { /* Стили для загрузчика внутри активной игры */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px; /* Большие отступы для центрирования */
+  text-align: center;
+  color: var(--text-medium); /* Используйте var(--text-color-secondary) */
+}
+
+#game-content-area .game-loader::before {
+  content: '⏳'; /* Или другой символ загрузки */
+  font-size: 30px;
+  display: block;
+  margin-bottom: 15px;
+  /* Можно добавить анимацию вращения или пульсации */
+}
+
+
+#history-tab h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color-main); /* Или var(--section-header-text-color) */
+}
+
+.history-content {
+  /* Контейнер для списка истории, если нужны доп. стили */
+  /* Анимации применяются через классы loaded/not-loaded */
+}
+
+#game-history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.game-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background-color: var(--card-bg-color); /* Убедитесь, что --card-bg-color определена или заменена, возможно var(--section-bg-color) */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  font-size: 13px;
+  transition: background-color 0.2s ease, opacity 0.4s ease-out, transform 0.4s ease-out; /* Добавлены transition из правок */
+  transform: translateY(10px); /* Начальное состояние для анимации из правок */
+  opacity: 0; /* Начальное состояние для анимации из правок */
+}
+
+.game-history-item.win {
+  border-left: 4px solid #28a745; /* Зеленая полоса для выигрыша */
+}
+.game-history-item.loss {
+  border-left: 4px solid #dc3545; /* Красная полоса для проигрыша */
+}
+.game-history-item.neutral { /* Для нейтральных исходов, если есть */
+  border-left: 4px solid #adb5bd; /* Серая полоса */
+}
+
+.history-details {
+  flex-grow: 1;
+  margin-right: 10px; /* Отступ от суммы */
+  line-height: 1.4;
+}
+
+.history-description {
+  display: block;
+  font-weight: 600;
+  color: var(--text-color-main);
+  margin-bottom: 2px;
+}
+.history-description .game-type-label {
+  font-weight: normal;
+  color: var(--button-bg-color); /* Или другой акцентный цвет */
+  font-size: 11px;
+  display: inline-block;
+  margin-right: 5px;
+  background-color: rgba(0,0,0,0.04);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.history-timestamp {
+  display: block;
+  color: var(--text-color-secondary);
+  font-size: 11px;
+}
+
+.history-amount {
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap; /* Чтобы сумма не переносилась */
+  flex-shrink: 0; /* Чтобы не сжималась */
+  text-align: right;
+}
+
+.history-amount.win {
+  color: #28a745; /* Цвет для суммы выигрыша */
+}
+.history-amount.loss {
+  color: #dc3545; /* Цвет для суммы проигрыша */
+}
+.history-amount.neutral {
+  color: var(--text-color-secondary); /* Цвет для нейтральной суммы */
+}
+
+#game-history-list .loading-placeholder, /* Плейсхолдер загрузки списка */
+#no-game-history { /* Сообщение об отсутствии истории */
+  text-align: center;
+  color: var(--text-color-secondary);
+  padding: 20px 0;
+  font-style: italic;
+  font-size: 13px;
+}
+#no-game-history {
+   display: none; /* Управляется JS */
+}
+
+
+/* Luck Game Specific Styles */
+.luck-game-container {
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background-color: var(--card-bg-color); /* Убедитесь, что --card-bg-color определена или заменена, возможно var(--section-bg-color) */
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  text-align: center;
+  max-width: 400px;
+  margin: 10px auto; /* Центрирование и отступы */
+  color: var(--text-color-main);
+}
+
+.luck-game-container h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-purple); /* Или var(--accent-text-color) */
+  margin-bottom: 10px;
+}
+
+.luck-game-rules {
+  font-size: 13px;
+  color: var(--text-color-secondary); /* Используем var(--text-color-secondary) вместо --text-light */
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+.luck-game-rules span {
+  font-weight: 600;
+  color: var(--text-color-main); /* Используем var(--text-color-main) вместо --text-medium */
+}
+
+.luck-game-balance {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.luck-game-bets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.luck-bet-button {
+  padding: 10px 5px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1.5px solid var(--button-bg-color);
+  border-radius: 8px;
+  background: var(--secondary-bg-color); /* Фон для неактивной кнопки */
+  color: var(--button-bg-color); /* Цвет текста неактивной кнопки */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.luck-bet-button:hover:not(:disabled) {
+  filter: brightness(0.95); /* Легкое затемнение */
+  /* border-color: var(--button-bg-color); - Уже есть */
+  transform: scale(1.05);
+}
+.luck-bet-button:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.luck-bet-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--button-disabled-bg-color);
+  border-color: transparent;
+  color: var(--text-disabled);
+}
+
+.luck-game-result {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  min-height: 40px; /* Чтобы не прыгал при смене текста */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 15px;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  background-color: var(--secondary-bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color-main);
+}
+
+.luck-game-result.win {
+  color: var(--tg-theme-accent-text-color, #28a745); /* Используем переменную темы или фоллбэк */
+  border-color: var(--tg-theme-accent-text-color, #28a745);
+  /* background-color: rgba(40, 167, 69, 0.1); /* Легкий фон для выигрыша */
+}
+
+.luck-game-result.loss {
+  color: var(--tg-theme-destructive-text-color, #dc3545); /* Используем переменную темы или фоллбэк */
+  border-color: var(--tg-theme-destructive-text-color, #dc3545);
+  /* background-color: rgba(220, 53, 69, 0.1); /* Легкий фон для проигрыша */
+}
+.luck-game-result.info {
+    color: var(--text-color-secondary);
+    font-style: italic;
+    border-color: var(--border-color); /* Стандартная граница для инфо */
+}
+
+/* Robbery Game Specific Styles */
+.robbery-game-container {
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background-color: var(--card-bg-color); /* Убедитесь, что --card-bg-color определена или заменена */
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  text-align: center;
+  max-width: 400px;
+  margin: 10px auto;
+  color: var(--text-color-main);
+}
+
+.robbery-game-container h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-purple); /* Или var(--accent-text-color) */
+  margin-bottom: 10px;
+}
+
+.robbery-game-rules {
+  font-size: 13px;
+  color: var(--text-color-secondary); /* Используем var(--text-color-secondary) вместо --text-light */
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+.robbery-game-rules span {
+  font-weight: 600;
+  color: var(--text-color-main); /* Используем var(--text-color-main) вместо --text-medium */
+}
+
+#robbery-attempt-btn {
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--button-bg-color); /* Используем переменную темы */
+  color: var(--button-text-color); /* Используем переменную темы */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 80%;
+  max-width: 250px;
+  margin-bottom: 15px;
+}
+
+#robbery-attempt-btn:hover:not(:disabled) {
+ filter: brightness(1.1); /* Осветление вместо затемнения */
+ transform: translateY(-1px); /* Небольшой подъем */
+}
+#robbery-attempt-btn:active:not(:disabled) {
+  transform: scale(0.98);
+  filter: brightness(0.95); /* Легкое затемнение */
+}
+
+#robbery-attempt-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--button-disabled-bg-color); /* Используем переменную для отключенной кнопки */
+  color: var(--text-disabled); /* Используем переменную для текста отключенной кнопки */
+}
+
+#robbery-result-display {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.4;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  background-color: var(--secondary-bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color-main);
+}
+
+#robbery-result-display.win {
+  color: var(--tg-theme-accent-text-color, #28a745);
+  border-color: var(--tg-theme-accent-text-color, #28a745);
+}
+#robbery-result-display.loss {
+  color: var(--tg-theme-destructive-text-color, #dc3545);
+  border-color: var(--tg-theme-destructive-text-color, #dc3545);
+}
+#robbery-result-display.info {
+  color: var(--text-color-secondary);
+  font-style: italic;
+  border-color: var(--border-color);
+}
+
+#robbery-cooldown-timer {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text-color-secondary); /* Используем var(--text-color-secondary) вместо --text-light */
+  font-weight: 500;
+  min-height: 18px; /* Чтобы не прыгал при появлении/исчезновении текста */
+}
+
+/* Slots Game Specific Styles */
+.slots-game-container {
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background-color: var(--card-bg-color); /* Убедитесь, что --card-bg-color определена или заменена */
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  text-align: center;
+  max-width: 400px;
+  margin: 10px auto;
+  color: var(--text-color-main);
+}
+
+.slots-game-container h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-purple); /* Или var(--accent-text-color) */
+  margin-bottom: 15px;
+}
+
+.slots-game-balance {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.slots-game-bets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 10px;
+  margin-bottom: 25px;
+}
+.slots-bet-button {
+   padding: 10px 5px;
+   font-size: 14px;
+   font-weight: 600;
+   border: 1.5px solid var(--button-bg-color);
+   border-radius: 8px;
+   background: var(--secondary-bg-color);
+   color: var(--button-bg-color);
+   cursor: pointer;
+   transition: all 0.2s ease;
+}
+.slots-bet-button:hover:not(:disabled) {
+  filter: brightness(0.95);
+  /* border-color: var(--button-bg-color); - Уже есть */
+  transform: scale(1.05);
+}
+.slots-bet-button:active:not(:disabled) {
+    transform: scale(0.95);
+}
+.slots-bet-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--button-disabled-bg-color);
+  border-color: transparent;
+  color: var(--text-disabled);
+}
+
+.slots-display {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f1f3f5; /* Светлый фон для области слотов, можно заменить на переменную */
+  border-radius: 10px;
+  border: 2px solid #dee2e6; /* Рамка для области слотов, можно заменить на переменную */
+}
+
+.slot-item {
+  font-size: 40px; /* Размер эмодзи/символов в слоте */
+  padding: 5px 10px;
+  background-color: #fff; /* Фон каждого слота */
+  border-radius: 8px;
+  min-width: 50px; /* Минимальная ширина слота */
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); /* Внутренняя тень */
+  line-height: 1; /* Для корректного отображения эмодзи */
+  display: flex; /* Для вертикального центрирования, если нужно */
+  align-items: center;
+  justify-content: center;
+}
+
+.slots-game-result {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 15px;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  background-color: var(--secondary-bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color-main);
+}
+.slots-game-result.win {
+  color: var(--tg-theme-accent-text-color, #28a745);
+  border-color: var(--tg-theme-accent-text-color, #28a745);
+}
+.slots-game-result.loss {
+  color: var(--tg-theme-destructive-text-color, #dc3545);
+  border-color: var(--tg-theme-destructive-text-color, #dc3545);
+}
+.slots-game-result.info {
+  color: var(--text-color-secondary);
+  font-style: italic;
+  border-color: var(--border-color);
+}
+
+/* Target Tab (New styles based on screenshot and previous info) */
+/* #target-tab.tab-panel уже определен выше */
+
+.target-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Центрируем контент, если его мало */
+    text-align: center;
+    padding: 25px 20px; /* Внутренние отступы */
+    height: 100%; /* Занимает всю высоту родительского .tab-panel */
+    background: var(--tg-theme-secondary-bg-color, #0d1117); /* Темный фон как на скрине */
+    /* Для градиента как в первом варианте:
+    background: radial-gradient(ellipse at bottom, var(--tg-theme-secondary-bg-color, #1b2735) 0%, var(--tg-theme-bg-color, #090a0f) 100%);
+    */
+    color: var(--tg-theme-text-color, #c9d1d9); /* Светлый текст */
+    overflow-y: auto; /* Если контента много */
+    /* box-shadow: inset 0 0 30px rgba(0,0,0,0.3); - Можно добавить для глубины */
+}
+
+.target-emoji {
+    font-size: clamp(50px, 18vw, 80px); /* Размер эмодзи как на скрине */
+    margin-bottom: 15px;
+    /* Анимация и тень можно убрать/настроить по необходимости */
+    /* animation: pulseEmoji 2.5s infinite ease-in-out; */
+    /* text-shadow: 0 0 15px var(--accent-gold, rgba(255, 193, 7, 0.5)); */
+}
+
+/* @keyframes pulseEmoji - уже определен в первоначальном CSS, если нужен */
+
+.target-title {
+    font-size: clamp(18px, 5.5vw, 24px);
+    font-weight: 600; /* Сделаем чуть менее жирным, как на скрине */
+    color: var(--tg-theme-text-color, #e6edf3); /* Используем основной цвет текста темы */
+    /* color: var(--tg-theme-header-text-color, #ffffff); - если нужен цвет заголовка */
+    margin-bottom: 8px;
+    /* text-shadow: 0 0 8px rgba(255, 223, 186, 0.4); - Можно убрать/настроить */
+}
+
+.target-message {
+    font-size: clamp(13px, 3.8vw, 16px);
+    color: var(--tg-theme-hint-color, #8b949e); /* Используем hint_color для этого текста */
+    /* color: var(--tg-theme-subtitle-text-color, #b0b0b0); - если нужен цвет подзаголовка */
+    margin-bottom: 25px;
+    line-height: 1.5;
+    max-width: 280px; /* Ограничение ширины для читаемости */
+}
+
+.target-progress-section {
+    width: 100%;
+    max-width: 300px; /* Ширина блока прогресса */
+    margin-top: 20px; /* Отступ сверху */
+    padding: 15px;
+    background-color: rgba(190, 190, 190, 0.07); /* Полупрозрачный фон как на скрине */
+    /* background-color: rgba(var(--tg-theme-button-color-rgb, 0, 0, 0), 0.1); - если нужен оттенок кнопки */
+    border-radius: 12px;
+    /* border: 1px solid rgba(var(--tg-theme-button-color-rgb, 255, 255, 255), 0.15); - если нужна рамка с оттенком кнопки */
+}
+
+.target-progress-bar-container {
+    width: 100%;
+    height: 16px; /* Немного тоньше, как на скрине */
+    background-color: rgba(0, 0, 0, 0.25); /* Темный фон для полосы */
+    border-radius: 8px; /* Скругление контейнера прогресс-бара */
+    overflow: hidden; /* Чтобы внутренний бар не вылезал */
+    margin-bottom: 10px; /* Отступ до текста прогресса */
+    /* border: 1px solid rgba(var(--tg-theme-button-color-rgb, 255, 255, 255), 0.1); - если нужна рамка */
+}
+
+.target-progress-bar {
+    height: 100%;
+    width: 0%; /* Управляется JS */
+    background: linear-gradient(90deg, #ffb74d, #ff9800); /* Оранжевый градиент как на скрине */
+    /* Или используйте акцентные цвета темы:
+    background: linear-gradient(90deg, var(--accent-gold, #FFC107), var(--accent-gold-dark, #E0A800));
+    */
+    border-radius: 8px; /* Скругление самого прогресс-бара */
+    transition: width 0.5s ease-in-out; /* Плавная анимация заполнения */
+    /* box-shadow: inset 0 -1px 3px rgba(0,0,0,0.25); - Можно добавить для объема */
+}
+
+.target-progress-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--tg-theme-text-color, #c9d1d9);
+    margin-bottom: 12px; /* Отступ до информации о билетах */
+}
+
+.target-ticket-info {
+    font-size: 13px; /* Или 12px, как в первом варианте */
+    color: var(--tg-theme-hint-color, #8b949e);
+    line-height: 1.5;
+}
+
+.target-topup-link {
+    color: var(--tg-theme-link-color, #58a6ff); /* Цвет ссылки из темы */
+    font-weight: 500; /* Или bold, как в первом варианте */
+    text-decoration: none;
+}
+.target-topup-link:hover {
+    text-decoration: underline;
+    filter: brightness(1.1);
+}
+
+
+/* Плейсхолдеры и загрузка */
+.loading-placeholder { /* Общий стиль для плейсхолдеров списков и т.п. */
+    text-align: center;
+    color: var(--text-color-secondary); /* Цвет текста плейсхолдера */
+    padding: 25px 15px; /* Отступы */
+    font-style: italic;
+    font-size: 13px;
+    opacity: 0.8; /* Полупрозрачность */
+    /* animation: pulsePlaceholder 1.8s infinite ease-in-out; - общая анимация */
+}
+.profile-placeholder { /* Для скелетных элементов в профиле */
+    background-color: rgba(0,0,0,0.05); /* Цвет фона плейсхолдера */
+    border-radius: 8px;
+    min-height: 20px; /* Минимальная высота */
+    animation: pulsePlaceholder 1.8s infinite ease-in-out;
+    margin-bottom: 5px; /* Отступ снизу, если нужно */
+}
+
+@keyframes pulsePlaceholder {
+    0%, 100% { opacity: 0.5; } /* Уменьшил начальную/конечную непрозрачность */
+    50% { opacity: 0.8; } /* Увеличил пиковую непрозрачность */
+}
+
+.profile-header .profile-placeholder { min-height: 38px; width: 60%; }
+.profile-stats .stat-item .profile-placeholder { min-height: 45px; } /* Плейсхолдер для стат. элемента */
+.profile-topup-button-container .profile-placeholder { /* Плейсхолдер для кнопки пополнения */
+    width: 80px; /* Примерная ширина кнопки с текстом */
+    height: 38px;
+    background-color: rgba(0,0,0,0.05);
+    border-radius: 8px;
+    animation: pulsePlaceholder 1.8s infinite ease-in-out;
+}
+
+.error-placeholder { /* Стили для текстового сообщения об ошибке внутри секций */
+    text-align: center;
+    color: var(--destructive-text-color);
+    padding: 20px 15px;
+    font-size: 13px;
+    font-weight: 500;
+    background-color: rgba(var(--tg-theme-destructive-text-color-rgb, 209, 78, 78), 0.1); /* Полупрозрачный фон ошибки, нужна переменная --tg-theme-destructive-text-color-rgb */
+    /* Если нет --tg-theme-destructive-text-color-rgb, можно так: */
+    /* background-color: color-mix(in srgb, var(--destructive-text-color) 10%, transparent); */
+    border: 1px solid var(--destructive-text-color);
+    border-radius: 8px;
+    margin: 10px; /* Отступы вокруг плейсхолдера ошибки */
+}
+
+
+/* Анимации для плавного появления контента при загрузке */
+.profile-container:not(.loaded) .profile-header,
+.profile-container:not(.loaded) .stat-item,
+.profile-container:not(.loaded) .profile-ref-link-section,
+.profile-container:not(.loaded) .profile-withdrawal-status,
+.profile-container:not(.loaded) .profile-withdrawal-history,
+.profile-container:not(.loaded) .profile-topup-button-container,
+.history-content:not(.loaded) .game-history-item { /* Добавлен .history-content */
+  opacity: 0;
+  transform: translateY(10px); /* Небольшое смещение снизу */
+}
+
+.profile-container.loaded .profile-header,
+.profile-container.loaded .stat-item,
+.profile-container.loaded .profile-ref-link-section,
+.profile-container.loaded .profile-withdrawal-status,
+.profile-container.loaded .profile-withdrawal-history,
+.profile-container.loaded .profile-topup-button-container,
+.history-content.loaded .game-history-item { /* Добавлен .history-content */
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+/* Задержки для каскадной анимации */
+.profile-container.loaded .profile-header { transition-delay: 0.05s; }
+.profile-container.loaded .profile-topup-button-container { transition-delay: 0.05s; }
+.profile-container.loaded .stat-item:nth-child(1) { transition-delay: 0.1s; }
+.profile-container.loaded .stat-item:nth-child(2) { transition-delay: 0.15s; }
+.profile-container.loaded .stat-item:nth-child(3) { transition-delay: 0.2s; }
+/* Если больше stat-item, нужно добавить задержки */
+.profile-container.loaded .profile-ref-link-section { transition-delay: 0.25s; }
+.profile-container.loaded .profile-withdrawal-status { transition-delay: 0.3s; }
+.profile-container.loaded .profile-withdrawal-history { transition-delay: 0.35s; }
+
+.history-content.loaded .game-history-item {
+  /* Для каскадной анимации элементов списка, если их много, лучше задавать через JS или nth-child с переменной */
+  /* Пример простой задержки для всех разом, или первый появится быстрее: */
+  transition-delay: 0.1s; /* Базовая задержка */
+}
+/* Если нужно каскадно для .game-history-item, можно так, но лучше JS для динамических списков:
+.history-content.loaded .game-history-item:nth-child(1) { transition-delay: 0.1s; }
+.history-content.loaded .game-history-item:nth-child(2) { transition-delay: 0.15s; }
+.history-content.loaded .game-history-item:nth-child(3) { transition-delay: 0.2s; }
+и т.д. или с использованием --idx как в ваших правках, если он устанавливается:
+.history-content.loaded .game-history-item { transition-delay: calc(var(--idx, 0) * 0.05s + 0.1s); }
+*/

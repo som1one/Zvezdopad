@@ -1,0 +1,89 @@
+# version: '3.8' # Атрибут 'version' больше не рекомендуется для последних версий Docker Compose
+
+services:
+  db:
+    image: postgres:15
+    container_name: zvezdopad_postgres_db
+    restart: always
+    environment:
+      # Переменные для PostgreSQL берутся из .env файла или используются значения по умолчанию
+      POSTGRES_DB: ${PG_DBNAME:-zvezdopad_db}
+      POSTGRES_USER: ${PG_USER:-root}
+      # ВАЖНО: Установите надежный пароль в .env файле или здесь
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-your_pg_password}
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Том для сохранения данных БД
+    networks:
+      - app-network
+    # Раскомментируйте, если нужен доступ к БД с хост-машины для отладки
+    # ports:
+    #   - "127.0.0.1:5433:5432"
+
+  main_bot:
+    container_name: zvezdopad_main_bot_app
+    build:
+      context: . # Корень проекта - контекст сборки
+      dockerfile: Dockerfile # Dockerfile основного бота
+    restart: always
+    depends_on:
+      - db # Запускать после старта БД
+    dns: # <--- ДОБАВЛЕНО: Явно указываем DNS-серверы для контейнера
+      - 8.8.8.8
+      - 8.8.4.4
+      - 1.1.1.1 # DNS Google и Cloudflare
+    environment:
+      # Переменные окружения, которые будут доступны внутри контейнера
+      - MAIN_BOT_TOKEN=${MAIN_BOT_TOKEN} # Обязательно задать в .env
+      - API_ID=${API_ID} # Обязательно задать в .env
+      - API_HASH=${API_HASH} # Обязательно задать в .env
+      - PG_HOST=db # Имя сервиса БД в этой же сети Docker
+      - PG_PORT=${PG_PORT:-5432}
+      - PG_DBNAME=${PG_DBNAME:-zvezdopad_db}
+      - PG_USER=${PG_USER:-root}
+      - PG_PASSWORD=${PG_PASSWORD:-your_pg_password} # Обязательно задать в .env
+      - WEBAPP_HOST=0.0.0.0 # Слушаем на всех интерфейсах внутри контейнера
+      - WEBAPP_PORT=${WEBAPP_PORT:-8080} # Порт для веб-сервера aiohttp
+      - WEBHOOK_HOST=${WEBHOOK_HOST} # Ваш публичный домен/IP для вебхука, обязательно задать в .env
+      - WEBHOOK_PATH_PREFIX=${WEBHOOK_PATH_PREFIX:-/webhook} # Префикс пути вебхука
+      - ADMIN_IDS=${ADMIN_IDS} # Список ID админов через запятую, обязательно задать в .env
+      - PAYMENT_BOT_USERNAME=${PAYMENT_BOT_USERNAME} # Имя платежного бота, задать в .env
+      - PYTHONUNBUFFERED=1 # Для немедленного вывода логов Python
+    ports:
+      # Пробрасываем порт веб-сервера контейнера на хост-машину
+      - "${WEBAPP_PORT:-8080}:8080"
+    volumes:
+      # Подключаем файл сессии Pyrogram, если он используется
+      - ./ClientStars.session:/app/ClientStars.session
+    networks:
+      - app-network
+    # Команда запуска берется из Dockerfile (CMD ["python", "main.py"])
+
+  payment_bot:
+    container_name: zvezdopad_payment_bot_app
+    build:
+      context: . # Корень проекта - контекст сборки
+      dockerfile: payment_bot/Dockerfile.payment_bot # Путь к Dockerfile платежного бота
+    restart: always
+    depends_on:
+      - db # Запускать после старта БД
+    environment:
+      # Переменные окружения для платежного бота
+      - PAYMENT_BOT_TOKEN=${PAYMENT_BOT_TOKEN} # Обязательно задать в .env
+      - PG_HOST=db # Имя сервиса БД
+      - PG_PORT=${PG_PORT:-5432}
+      - PG_DBNAME=${PG_DBNAME:-zvezdopad_db}
+      - PG_USER=${PG_USER:-root}
+      - PG_PASSWORD=${PG_PASSWORD:-your_pg_password} # Обязательно задать в .env
+      - MAIN_BOT_USERNAME=${MAIN_BOT_USERNAME} # Имя основного бота, задать в .env
+      - ADMIN_IDS=${ADMIN_IDS} # Список ID админов, задать в .env
+      - PYTHONUNBUFFERED=1
+    networks:
+      - app-network
+    # Команда запуска берется из Dockerfile.payment_bot (CMD ["python", "payment_bot_main.py"])
+
+volumes:
+  pgdata: # Именованный том для данных PostgreSQL
+
+networks:
+  app-network: # Определяем сеть для взаимодействия контейнеров
+    driver: bridge # Стандартный драйвер сети

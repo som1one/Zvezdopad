@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Мой Mini-App (Вкладки)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="appContainer">
+    <main id="tab-content">
+        <section id="profile-tab" class="tab-panel active">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <img class="profile-avatar" id="profile-avatar-img" alt="Avatar" src="">
+                    <div class="profile-user-info">
+                        <h2 id="profile-name">Загрузка...</h2>
+                        <p class="profile-id">ID: <code id="profile-user-id">...</code></p>
+                    </div>
+                    <div class="profile-topup-button-container" id="profile-topup-button-placeholder">
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">⭐</span>
+                        <span class="stat-value" id="profile-balance">0.00</span>
+                        <span class="stat-label">Баланс</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">👥</span>
+                        <span class="stat-value" id="profile-refs-total">0</span>
+                        <span class="stat-label">Всего реф.</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">📅</span>
+                        <span class="stat-value" id="profile-refs-week">0</span>
+                        <span class="stat-label">Реф. за неделю</span>
+                        <div class="stat-progress-wrapper">
+                            <span class="stat-progress-text" id="refs-progress-text">-/-</span>
+                            <div class="stat-progress-container" id="refs-progress-container">
+                                <div class="stat-progress-bar" id="refs-progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-boost-status"
+                     style="margin-top: 15px; padding: 10px; background-color: var(--secondary-bg-color, #f8f9fa); border-radius: 8px; border: 1px solid var(--border-color, #e9ecef);">
+                    <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-color-main);">
+                        Статус Бустов:</h3>
+                    <p id="profile-boost-display"
+                       style="font-size: 13px; color: var(--text-color-secondary); line-height: 1.5;">Нет активных
+                        бустов.</p>
+                </div>
+                <div class="profile-ref-link-section">
+                    <h3>Ваша реферальная ссылка:</h3>
+                    <div class="ref-link-container">
+                        <code id="profile-ref-link">Загрузка...</code>
+                        <button id="copy-ref-link-btn" title="Копировать ссылку">📋</button>
+                    </div>
+                    <button id="share-ref-link-btn">🚀 Поделиться с другом</button>
+                </div>
+                <div class="profile-withdrawal-status">
+                    <h3>Статус обмена звезд:</h3>
+                    <p id="profile-exchange-status">Проверка...</p>
+                    <small id="profile-exchange-requirement">(Требуется: ? реф. за неделю)</small>
+                </div>
+                <div class="profile-withdrawal-history">
+                    <h3>История выводов (последние 5):</h3>
+                    <ul id="withdrawal-history-list">
+                        <li class="loading-placeholder">Загрузка истории выводов...</li>
+                    </ul>
+                    <p id="no-withdrawal-history" style="display: none;">У вас пока нет истории выводов.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="games-tab" class="tab-panel">
+            <div class="games-container">
+                <div class="games-grid">
+                    <div class="game-thumbnail" id="game-wheel">
+                        <div class="game-icon">🎡</div>
+                        <div class="game-title">Колесо Фортуны</div>
+                    </div>
+                    <div class="game-thumbnail" id="game-luck">
+                        <div class="game-icon">🎲</div>
+                        <div class="game-title">Все или Ничего</div>
+                    </div>
+                    <div class="game-thumbnail" id="game-robbery">
+                        <div class="game-icon">🏃</div>
+                        <div class="game-title">Я Вор!</div>
+                    </div>
+                    <div class="game-thumbnail" id="game-slots">
+                        <div class="game-icon">🎰</div>
+                        <div class="game-title">Слоты</div>
+                    </div>
+                </div>
+                <p class="coming-soon-text">Скоро здесь будет больше игр...</p>
+            </div>
+            <div id="active-game-container" style="display: none;">
+                <button id="back-to-games-btn">⬅️ Назад к играм</button>
+                <div id="game-content-area">
+                </div>
+            </div>
+        </section>
+
+        <section id="history-tab" class="tab-panel">
+            <h2>История игр</h2>
+            <div class="history-content">
+                <ul id="game-history-list">
+                    <li class="loading-placeholder">Загрузка истории...</li>
+                </ul>
+                <p id="no-game-history" style="display: none;">У вас пока нет истории игр.</p>
+            </div>
+        </section>
+
+        <section id="target-tab" class="tab-panel">
+            <div class="target-container">
+                <div class="target-emoji">🎁</div>
+                <h2 class="target-title">Здесь скоро будут розыгрыши!</h2>
+                <p class="target-message">В награду за ваши пополнения...</p>
+                <div class="target-progress-section">
+                    <div class="target-progress-bar-container">
+                        <div class="target-progress-bar" id="target-progress-value" style="width: 0%;"></div>
+                    </div>
+                    <div class="target-progress-text" id="target-progress-label">1234/10000</div>
+                    <p class="target-ticket-info" id="target-ticket-status">
+                        У вас пока нет билетов...<br/>Хотите поучаствовать -
+                        <a href="https://t.me/payZvezdopadtg_bot" target="_blank" class="target-topup-link">пополните
+                            баланс!</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <nav id="tab-bar">
+        <button class="tab-button active" data-tab="profile-tab">
+            <span class="tab-icon">👤</span>
+            <span class="tab-label">Профиль</span>
+        </button>
+        <button class="tab-button" data-tab="games-tab">
+            <span class="tab-icon">🎮</span>
+            <span class="tab-label">Игры</span>
+        </button>
+        <button class="tab-button" data-tab="history-tab">
+            <span class="tab-icon">📜</span>
+            <span class="tab-label">История</span>
+        </button>
+        <button class="tab-button" data-tab="target-tab">
+            <span class="tab-icon">🏆</span>
+            <span class="tab-label">Цель</span>
+        </button>
+    </nav>
+    <div id="errorMessage" class="error-message"
+         style="position:fixed;bottom:65px;left:10px;right:10px;z-index:10;"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script type="module" src="js/main.js" defer></script>
+<script type="module" src="js/target.js" defer></script>
+</body>
+</html>
