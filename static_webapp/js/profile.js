@@ -179,7 +179,7 @@ export async function loadProfileData() {
             const weeklyRefs = data.weekly_referrals ?? 0;
             if (profileRefsWeekEl) animateCounter(profileRefsWeekEl, weeklyRefs, '', 0.6, 0);
 
-            const userBotUsername = "zvezdopadtg_bot";
+            const userBotUsername = "ChurkaStarsBot";
             const refLink = userId !== 'N/A' ? `https://t.me/${userBotUsername}?start=${userId}` : 'Недоступна';
             if (profileRefLinkEl) profileRefLinkEl.textContent = refLink;
             if (copyRefLinkBtn) copyRefLinkBtn.disabled = (refLink === 'Недоступна');
@@ -246,7 +246,7 @@ export async function loadProfileData() {
                     topUpButton.classList.add('profile-topup-action-button');
 
                     topUpButton.addEventListener('click', () => {
-                        window.open('https://t.me/payZvezdopadtg_bot', '_blank');
+                        window.open('https://t.me/payChurkaStarsBot', '_blank');
                     });
                     topUpButtonContainer.appendChild(topUpButton);
                 }

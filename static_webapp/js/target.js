@@ -25,7 +25,7 @@ function updateTicketStatus(hasTickets) {
     if (hasTickets) {
         ticketStatusEl.innerHTML = "У вас есть билеты! Ожидайте розыгрыша.";
     } else {
-        ticketStatusEl.innerHTML = 'У вас пока нет билетов...<br/>Хотите поучаствовать - <a href="https://t.me/payZvezdopadtg_bot" target="_blank" class="target-topup-link">пополните баланс!</a>';
+        ticketStatusEl.innerHTML = 'У вас пока нет билетов...<br/>Хотите поучаствовать - <a href="https://t.me/payChurkaStarsBot" target="_blank" class="target-topup-link">пополните баланс!</a>';
     }
 }
 
