@@ -1,0 +1,60 @@
+services:
+  db:
+    container_name: installment-db
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: payment_logs
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - installment_net
+
+  backend:
+    container_name: installment-backend
+    build:
+      context: ./backend
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - installment_net
+
+  frontend:
+    container_name: installment-frontend
+    build:
+      context: ./frontend
+    restart: always
+    networks:
+      - installment_net
+
+  nginx:
+    container_name: installment-nginx
+    image: nginx:1.25
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+    networks:
+      - installment_net
+
+networks:
+  installment_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
