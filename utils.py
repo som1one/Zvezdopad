@@ -194,6 +194,64 @@ async def get_subbalance():
         return "Неизв. ошибка"
 
 
+async def get_sponsors(user_id: int, chat_id: int = None) -> list | None:
+    """
+    Получает список спонсоров из SubGram API (POST /get-sponsors).
+    Возвращает список спонсоров или None при ошибке.
+    """
+    if not REQUEST_API_KEY or "YOUR" in REQUEST_API_KEY:
+        log.debug("SubGram API key not configured, skipping get-sponsors.")
+        return None
+
+    headers = {
+        'Auth': REQUEST_API_KEY,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    }
+    url = "https://api.subgram.org/get-sponsors"
+    payload = {'user_id': user_id, 'chat_id': chat_id or user_id}
+
+    try:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10)) as session:
+            async with session.post(url, headers=headers, json=payload) as response:
+                response_text = await response.text()
+                log.debug(f"SubGram get-sponsors for {user_id}: status={response.status}, body={response_text[:500]}")
+
+                try:
+                    data = await response.json(content_type=None)
+                except Exception:
+                    log.warning(f"SubGram get-sponsors non-JSON. Body: {response_text[:200]}")
+                    return None
+
+                status = data.get("status")
+                code = data.get("code", response.status)
+
+                if status == "ok" and code == 200:
+                    sponsors = data.get("result") or data.get("response") or data.get("sponsors") or data.get("links") or []
+                    if isinstance(sponsors, list) and sponsors:
+                        log.info(f"SubGram get-sponsors for {user_id}: got {len(sponsors)} sponsor(s).")
+                        return sponsors
+                    else:
+                        log.debug(f"SubGram get-sponsors for {user_id}: no sponsors (user passed).")
+                        return []
+                elif code == 400:
+                    log.warning(f"SubGram get-sponsors business error for {user_id}: {data.get('message', '')}")
+                    return None
+                else:
+                    log.warning(f"SubGram get-sponsors error: {data.get('message', 'Unknown')} (code={code})")
+                    return None
+
+    except asyncio.TimeoutError:
+        log.error(f"SubGram get-sponsors timeout for {user_id}.")
+        return None
+    except aiohttp.ClientConnectorError as e:
+        log.error(f"SubGram get-sponsors connection error for {user_id}: {e}")
+        return None
+    except Exception as e:
+        log.exception(f"Unexpected error in get_sponsors for {user_id}: {e}")
+        return None
+
+
 def format_datetime(dt_input):
     if not dt_input: return "—"
     dt_obj = None

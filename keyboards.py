@@ -241,6 +241,7 @@ async def create_admin_panel_markup(user_id: int) -> InlineKeyboardMarkup:  # Д
         InlineKeyboardButton(withdraw_toggle_text, callback_data="toggle_withdrawals"),
         InlineKeyboardButton(referral_toggle_text, callback_data="toggle_referrals")
     )
+    admin_markup.add(InlineKeyboardButton("🔧 Тех. работы", callback_data="admin_maintenance"))
     return admin_markup
 
 

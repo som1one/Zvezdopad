@@ -2062,3 +2062,37 @@ async def get_active_luck_boost_percentage(user_id: int) -> float:
                     f"User {user_id} has active luck boost. Increase: {luck_increase}% from boost_id: {latest_boost['boost_id_key']}")
 
     return luck_increase
+
+
+# --- Режим тех. работ ---
+
+async def is_maintenance_mode() -> bool:
+    value = await get_config_value('maintenance_mode', default_value='0')
+    return value == '1'
+
+
+async def set_maintenance_mode(enabled: bool):
+    await set_config_value('maintenance_mode', '1' if enabled else '0')
+
+
+async def get_maintenance_message() -> str:
+    return await get_config_value('maintenance_message', default_value='⚙️ Бот на тех. обслуживании. Пожалуйста, подождите.') or '⚙️ Бот на тех. обслуживании.'
+
+
+async def set_maintenance_message(text: str):
+    await set_config_value('maintenance_message', text)
+
+
+async def get_maintenance_end_text() -> str:
+    return await get_config_value('maintenance_end_text', default_value='✅ Тех. работы завершены! Бот снова работает.') or '✅ Тех. работы завершены!'
+
+
+async def set_maintenance_end_text(text: str):
+    await set_config_value('maintenance_end_text', text)
+
+
+async def get_all_user_ids() -> list:
+    if not db_pool: return []
+    async with db_pool.acquire() as conn:
+        rows = await conn.fetch("SELECT id FROM users")
+        return [row['id'] for row in rows]

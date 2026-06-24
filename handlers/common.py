@@ -12,7 +12,7 @@ from aiogram.utils.exceptions import MessageCantBeDeleted, MessageToDeleteNotFou
 
 import database
 from settings import ADMIN_IDS, REQUEST_API_KEY, REQUEST_OP_DELAY_HOURS, REQUEST_OP_DELAY_MINUTES
-from utils import t
+from utils import t, get_sponsors
 
 log = logging.getLogger('handlers.common')
 
@@ -143,12 +143,56 @@ async def request_op(user_id: int, chat_id: int, bot_instance: Bot, gender=None,
 
 async def check_subscription(bot: Bot, user_id: int, chat_id: int) -> bool:
     """
-    Проверяет подписку пользователя на обязательные каналы И через SubGram OP.
+    Проверяет подписку пользователя на обязательные каналы И через SubGram OP/спонсоры.
     Возвращает True, если все подписки есть, иначе False и отправляет сообщение с кнопками.
     """
     if user_id in ADMIN_IDS:
         log.debug(f"User {user_id} is admin, skipping subscription check.")
         return True
+
+    # --- SubGram get-sponsors (новый API) ---
+    sponsors = await get_sponsors(user_id, chat_id)
+    if sponsors:
+        markup = InlineKeyboardMarkup(row_width=1)
+        has_unsubscribed = False
+
+        for idx, sponsor in enumerate(sponsors, start=1):
+            if isinstance(sponsor, dict):
+                sponsor_url = sponsor.get("url") or sponsor.get("link") or sponsor.get("invite_link") or ""
+                sponsor_name = sponsor.get("name") or sponsor.get("title") or f"Спонсор №{idx}"
+                channel_id_sp = sponsor.get("channel_id") or sponsor.get("chat_id")
+
+                if channel_id_sp:
+                    try:
+                        chat_member = await bot.get_chat_member(int(channel_id_sp), user_id)
+                        if chat_member.status in ['member', 'administrator', 'creator']:
+                            continue
+                    except Exception as e:
+                        log.debug(f"Cannot check membership for sponsor channel {channel_id_sp}: {e}")
+
+                if sponsor_url:
+                    markup.add(InlineKeyboardButton(sponsor_name, url=sponsor_url))
+                    has_unsubscribed = True
+            elif isinstance(sponsor, str):
+                markup.add(InlineKeyboardButton(f"Спонсор №{idx}", url=sponsor))
+                has_unsubscribed = True
+
+        if has_unsubscribed:
+            check_button = InlineKeyboardButton(t(user_id, 'check_subscribe'), callback_data='check_subs')
+            markup.add(check_button)
+            subscribe_text = t(user_id, 'start_subscribe')
+            image_path = "images/check.jpg"
+            try:
+                photo_input = types.InputFile(image_path)
+                await bot.send_photo(user_id, photo=photo_input, caption=subscribe_text,
+                                     reply_markup=markup, parse_mode="HTML")
+                log.info(f"SubGram get-sponsors: sent to user {user_id}.")
+                return False
+            except FileNotFoundError:
+                await bot.send_message(user_id, subscribe_text, reply_markup=markup, parse_mode="HTML")
+                return False
+            except Exception as e:
+                log.exception(f"Failed to send sponsors message to user {user_id}: {e}")
 
     # --- СНАЧАЛА ПРОВЕРКА SubGram OP ---
     start_op_check = time.monotonic()

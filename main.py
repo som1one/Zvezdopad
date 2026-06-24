@@ -26,6 +26,7 @@ from handlers.api import (
     handle_get_user_state, handle_get_game_history, handle_play_luck_game,
     handle_attempt_robbery, handle_play_slots
 )
+from aiogram.dispatcher.handler import CancelHandler
 
 mimetypes.add_type('application/javascript', '.js')
 log = logging.getLogger(__name__)
@@ -205,6 +206,30 @@ def main():
     storage = MemoryStorage()
     bot = Bot(token=TOKEN, parse_mode='HTML', disable_web_page_preview=True)
     dp = Dispatcher(bot, storage=storage)
+
+    # --- Middleware: Режим тех. работ ---
+    from aiogram.dispatcher.middlewares import BaseMiddleware
+
+    class MaintenanceMiddleware(BaseMiddleware):
+        async def on_process_message(self, message, data):
+            if await database.is_maintenance_mode():
+                if message.from_user and message.from_user.id in ADMIN_IDS:
+                    return
+                text = await database.get_maintenance_message()
+                await message.answer(text, parse_mode="HTML")
+                raise CancelHandler()
+
+        async def on_process_callback_query(self, callback_query, data):
+            if await database.is_maintenance_mode():
+                if callback_query.from_user and callback_query.from_user.id in ADMIN_IDS:
+                    return
+                text = await database.get_maintenance_message()
+                await callback_query.answer(text, show_alert=True)
+                raise CancelHandler()
+
+    dp.middleware.setup(MaintenanceMiddleware())
+    # ------------------------------------
+
     logging.info("Aiogram initialized.")
 
     global pyrogram_client

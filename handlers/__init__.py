@@ -18,6 +18,7 @@ from .admin_op import register_admin_op_handlers
 from .admin_withdrawal import register_admin_withdrawal_handlers
 from .admin_other import register_admin_other_handlers
 from .admin_limits import register_admin_limits_handlers
+from .admin_maintenance import register_admin_maintenance_handlers
 from .inline_query import register_inline_handler
 from .webapp_handler import register_webapp_handlers  # Если используется
 
@@ -46,6 +47,7 @@ def register_all_handlers(dp, bot, app):  # Убедитесь, что bot и ap
     register_admin_withdrawal_handlers(dp, bot, app)  # bot, app
     register_admin_other_handlers(dp, bot, app)  # bot, app
     register_admin_limits_handlers(dp, bot)  # bot
+    register_admin_maintenance_handlers(dp, bot)  # bot
     register_inline_handler(dp, bot)  # bot
 
     log.info("All main bot handlers registered.")

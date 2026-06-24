@@ -89,3 +89,8 @@ class AdminLimitsState(StatesGroup):
     waiting_for_exchange_daily_limit = State()
     # waiting_for_exchange_ref_req = State()
     waiting_for_exchange_referral_req = State()
+
+
+class MaintenanceState(StatesGroup):
+    waiting_for_message = State()
+    waiting_for_end_text = State()
