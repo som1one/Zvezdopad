@@ -157,17 +157,18 @@ async def confirm_buy_proxy(call: CallbackQuery, bot: Bot):
         proxy_type = proxy_data['proxy_type'] if proxy_data else "N/A"
         result_text = (
             f"✅ <b>Покупка успешна!</b>\n\n"
-            f"🌐 <b>Твой прокси:</b>\n"
-            f"📌 Тип: <code>{proxy_type}</code>\n"
-            f"🔑 Данные: <code>{address}</code>\n\n"
-            f"⚠️ Сохрани эти данные!"
+            f"🌐 Тип: <b>{proxy_type}</b>\n\n"
+            f"⚠️ Нажми кнопку ниже, чтобы подключить прокси:"
         )
+        markup = InlineKeyboardMarkup()
+        markup.add(InlineKeyboardButton("🔗 Подключить прокси", url=address))
+        markup.add(InlineKeyboardButton("🌐 В магазин", callback_data="proxy_shop"))
+        markup.add(create_back_button(user_id))
     else:
         result_text = message
-
-    markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton("🌐 В магазин", callback_data="proxy_shop"))
-    markup.add(create_back_button(user_id))
+        markup = InlineKeyboardMarkup()
+        markup.add(InlineKeyboardButton("🌐 В магазин", callback_data="proxy_shop"))
+        markup.add(create_back_button(user_id))
 
     try:
         await call.message.edit_text(result_text, reply_markup=markup, parse_mode="HTML")

@@ -58,11 +58,11 @@ async def start_add_proxy(call: CallbackQuery, state: FSMContext):
     text = (
         "➕ <b>Добавление прокси</b>\n\n"
         "Отправьте данные прокси в формате:\n"
-        "<code>тип|адрес|цена</code>\n\n"
+        "<code>ссылка|цена</code>\n\n"
         "📌 <b>Примеры:</b>\n"
-        "<code>SOCKS5|login:pass@ip:port|50</code>\n"
-        "<code>HTTP|ip:port:login:pass|30</code>\n\n"
-        "Можно несколько прокси за раз (каждый с новой строки)."
+        "<code>https://t.me/proxy?server=1.2.3.4&port=443&secret=abc|50</code>\n"
+        "<code>https://t.me/proxy?server=5.6.7.8&port=443&secret=def|30</code>\n\n"
+        "Можно несколько за раз (каждый с новой строки)."
     )
 
     markup = InlineKeyboardMarkup()
@@ -87,16 +87,15 @@ async def process_add_proxy(message: types.Message, state: FSMContext, bot: Bot)
         if not line:
             continue
         parts = line.split('|')
-        if len(parts) != 3:
-            errors.append(f"Строка {i}: неверный формат (нужно тип|адрес|цена)")
+        if len(parts) != 2:
+            errors.append(f"Строка {i}: неверный формат (нужно ссылка|цена)")
             continue
 
-        proxy_type = parts[0].strip().upper()
-        address = parts[1].strip()
-        price_str = parts[2].strip()
+        address = parts[0].strip()
+        price_str = parts[1].strip()
 
-        if proxy_type not in ('HTTP', 'HTTPS', 'SOCKS4', 'SOCKS5'):
-            errors.append(f"Строка {i}: неверный тип '{proxy_type}'")
+        if not address.startswith('http'):
+            errors.append(f"Строка {i}: ссылка должна начинаться с http")
             continue
 
         try:
@@ -108,6 +107,7 @@ async def process_add_proxy(message: types.Message, state: FSMContext, bot: Bot)
             continue
 
         try:
+            proxy_type = "MTProto" if "t.me/proxy" in address else "Link"
             await add_proxy(proxy_type, address, price)
             added_count += 1
         except Exception as e:
