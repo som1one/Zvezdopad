@@ -61,6 +61,7 @@ async def handle_click_star(call: CallbackQuery, bot: Bot):
         log.error(f"Error updating username for {user_id}: {e}")
 
     # --- Огонёк (Streak) — обновляем при каждом клике ---
+    streak_info = ""
     try:
         streak_result = await database.update_user_streak(user_id)
         if streak_result['reward_given']:
@@ -70,6 +71,11 @@ async def handle_click_star(call: CallbackQuery, bot: Bot):
             )
             sent_msg = await bot.send_message(chat_id, streak_text, parse_mode="HTML")
             asyncio.create_task(delete_message_after_delay(sent_msg, 5))
+        streak = streak_result['streak']
+        if streak > 0:
+            days_req = await database.get_streak_days_required()
+            days_left = days_req - (streak % days_req) if streak % days_req != 0 else 0
+            streak_info = f" | 🔥{streak}д (до награды: {days_left})"
     except Exception as e:
         log.error(f"Error updating streak for user {user_id}: {e}")
     # ---------------------------------------------------
@@ -109,9 +115,9 @@ async def handle_click_star(call: CallbackQuery, bot: Bot):
         asyncio.create_task(delete_message_after_delay(sent_msg, 3))
         return
 
-    success_text = f"🎉 Ты получил {random_stars:.2f}⭐"
+    success_text = f"🎉 Ты получил {random_stars:.2f}⭐{streak_info}"
     if farm_speed_multiplier > 1.0:
-        success_text += f" (буст x{farm_speed_multiplier:.1f} активен!)"
+        success_text += f" (буст x{farm_speed_multiplier:.1f})"
 
     sent_msg = await bot.send_message(chat_id, success_text)
     asyncio.create_task(delete_message_after_delay(sent_msg, 3))

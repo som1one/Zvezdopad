@@ -398,6 +398,46 @@ async def show_referral_top(call: CallbackQuery, bot: Bot, period: str):  # До
     if period != 'week': btns.append(InlineKeyboardButton("📅 Неделя", callback_data="top_ref_week"))
     if period != 'month': btns.append(InlineKeyboardButton("📅 Месяц", callback_data="top_ref_month"))
     if btns: markup.row(*btns)
+    markup.add(InlineKeyboardButton("⭐ Топ по звёздам", callback_data="top_stars"))
+    markup.add(create_back_button(user_id))
+    image_path = "images/tops.jpg"
+    await _send_or_edit_photo_message(call, user_id, image_path, top_text, markup, disable_preview=True)
+
+
+async def show_stars_top(call: CallbackQuery, bot: Bot):
+    """Показывает топ-10 по звёздам."""
+    user_id = call.from_user.id
+    try:
+        await call.answer()
+    except InvalidQueryID:
+        return
+    except Exception:
+        return
+
+    top_users = await database.get_top_users()
+    top_text = "<b>🏆 Топ-10 по звёздам:</b>\n\n"
+    medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
+
+    if not top_users:
+        top_text += "<i>Топ пока пуст.</i>"
+    else:
+        for rank, u in enumerate(top_users[:10], 1):
+            uid = u['id']
+            stars = u['stars']
+            username_db = u.get('username') or f"id_{uid}"
+            display_name = sanitize_username(mask_username(username_db)) or f"ID: {mask_id(uid)}"
+            medal = medals[rank - 1] if rank <= 10 else f"{rank}."
+            is_me = " ← ты" if uid == user_id else ""
+            top_text += f"{medal} {escape(display_name)} | <code>{stars:.2f}⭐</code>{is_me}\n"
+
+    # Проверяем позицию юзера
+    user_data = await database.get_user(user_id)
+    if user_data:
+        user_stars = user_data['stars']
+        top_text += f"\n💰 <b>Твой баланс:</b> <code>{user_stars:.2f}⭐</code>"
+
+    markup = InlineKeyboardMarkup(row_width=2)
+    markup.add(InlineKeyboardButton("👥 Топ рефералов", callback_data="top_5"))
     markup.add(create_back_button(user_id))
     image_path = "images/tops.jpg"
     await _send_or_edit_photo_message(call, user_id, image_path, top_text, markup, disable_preview=True)
@@ -432,5 +472,7 @@ def register_user_menu_handlers(dp: Dispatcher, bot: Bot):  # Передаем b
                                        lambda c: c.data == "top_ref_week", state="*")
     dp.register_callback_query_handler(lambda call: show_referral_top(call, bot, period='month'),
                                        lambda c: c.data == "top_ref_month", state="*")
+    dp.register_callback_query_handler(lambda call: show_stars_top(call, bot),
+                                       lambda c: c.data == "top_stars", state="*")
 
     log.info("User menu handlers registered (main bot).")
