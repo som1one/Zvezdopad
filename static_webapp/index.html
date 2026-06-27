@@ -18,6 +18,38 @@
         <p id="captcha-error" style="color:#ff5555; margin-top:10px; display:none;">❌ Неверно!</p>
     </div>
 </div>
+<script>
+(function(){
+    var overlay = document.getElementById('captcha-overlay');
+    var qEl = document.getElementById('captcha-question');
+    var bEl = document.getElementById('captcha-buttons');
+    var eEl = document.getElementById('captcha-error');
+    var ops = [['+',function(a,b){return a+b}],['-',function(a,b){return a-b}],['×',function(a,b){return a*b}]];
+    var op = ops[Math.floor(Math.random()*ops.length)];
+    var sym = op[0], fn = op[1];
+    var a, b;
+    if(sym==='×'){a=2+Math.floor(Math.random()*8);b=2+Math.floor(Math.random()*8);}
+    else if(sym==='-'){a=5+Math.floor(Math.random()*16);b=1+Math.floor(Math.random()*a);}
+    else{a=1+Math.floor(Math.random()*20);b=1+Math.floor(Math.random()*20);}
+    var correct = fn(a,b);
+    qEl.textContent = a+' '+sym+' '+b+' = ?';
+    var wrongs = [];
+    while(wrongs.length<3){var w=correct+Math.floor(Math.random()*11)-5;if(w!==correct&&wrongs.indexOf(w)===-1)wrongs.push(w);}
+    var answers = [correct].concat(wrongs);
+    for(var i=answers.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=answers[i];answers[i]=answers[j];answers[j]=t;}
+    answers.forEach(function(ans){
+        var btn = document.createElement('button');
+        btn.textContent = ans;
+        btn.style.cssText='padding:14px;font-size:20px;border-radius:10px;border:none;background:#3a3a5e;color:#fff;cursor:pointer;font-weight:bold;';
+        btn.onclick=function(){
+            if(ans===correct){overlay.style.display='none';document.getElementById('appContainer').style.display='';}
+            else{eEl.style.display='block';setTimeout(function(){eEl.style.display='none';},1500);}
+        };
+        bEl.appendChild(btn);
+    });
+    document.getElementById('appContainer').style.display='none';
+})();
+</script>
 <div id="appContainer">
     <main id="tab-content">
         <section id="profile-tab" class="tab-panel active">
