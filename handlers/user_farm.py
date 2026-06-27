@@ -60,6 +60,20 @@ async def handle_click_star(call: CallbackQuery, bot: Bot):
     except Exception as e:
         log.error(f"Error updating username for {user_id}: {e}")
 
+    # --- Огонёк (Streak) — обновляем при каждом клике ---
+    try:
+        streak_result = await database.update_user_streak(user_id)
+        if streak_result['reward_given']:
+            streak_text = (
+                f"🔥 <b>Серия {streak_result['streak']} дней подряд!</b>\n"
+                f"💰 Награда: <code>+{streak_result['reward_amount']:.2f}⭐</code>"
+            )
+            sent_msg = await bot.send_message(chat_id, streak_text, parse_mode="HTML")
+            asyncio.create_task(delete_message_after_delay(sent_msg, 5))
+    except Exception as e:
+        log.error(f"Error updating streak for user {user_id}: {e}")
+    # ---------------------------------------------------
+
     last_click_time_db = await database.get_last_click_time(user_id)
     click_cooldown = 240
     if last_click_time_db:
