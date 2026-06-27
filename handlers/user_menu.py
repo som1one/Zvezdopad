@@ -423,7 +423,7 @@ async def show_stars_top(call: CallbackQuery, bot: Bot):
     else:
         for rank, u in enumerate(top_users[:10], 1):
             uid = u['id']
-            stars = u['stars']
+            stars = u['total_earned']
             username_db = u.get('username') or f"id_{uid}"
             display_name = sanitize_username(mask_username(username_db)) or f"ID: {mask_id(uid)}"
             medal = medals[rank - 1] if rank <= 10 else f"{rank}."
