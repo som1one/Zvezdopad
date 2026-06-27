@@ -89,8 +89,18 @@ class AdminLimitsState(StatesGroup):
     waiting_for_exchange_daily_limit = State()
     # waiting_for_exchange_ref_req = State()
     waiting_for_exchange_referral_req = State()
+    waiting_for_streak_days_required = State()
+    waiting_for_streak_reward = State()
 
 
 class MaintenanceState(StatesGroup):
     waiting_for_message = State()
     waiting_for_end_text = State()
+
+
+class MiniAppCaptchaState(StatesGroup):
+    waiting_for_answer = State()
+
+
+class AdminAddProxyState(StatesGroup):
+    waiting_for_proxy_data = State()

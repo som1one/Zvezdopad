@@ -264,6 +264,30 @@ async def check_and_create_tables():
                     is_active BOOLEAN DEFAULT TRUE,
                     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
                 )
+            ''',
+            'proxies': '''
+                CREATE TABLE IF NOT EXISTS proxies (
+                    id SERIAL PRIMARY KEY,
+                    proxy_type TEXT NOT NULL,
+                    address TEXT NOT NULL,
+                    price DOUBLE PRECISION NOT NULL,
+                    is_sold BOOLEAN DEFAULT FALSE,
+                    added_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    sold_to BIGINT DEFAULT NULL,
+                    sold_at TIMESTAMPTZ DEFAULT NULL,
+                    FOREIGN KEY(sold_to) REFERENCES users(id) ON DELETE SET NULL
+                )
+            ''',
+            'proxy_purchases': '''
+                CREATE TABLE IF NOT EXISTS proxy_purchases (
+                    id SERIAL PRIMARY KEY,
+                    user_id BIGINT NOT NULL,
+                    proxy_id INTEGER NOT NULL,
+                    price DOUBLE PRECISION NOT NULL,
+                    purchased_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    FOREIGN KEY(proxy_id) REFERENCES proxies(id) ON DELETE CASCADE
+                )
             '''
         }
 
@@ -297,6 +321,25 @@ async def check_and_create_tables():
                 log.debug(f"Index '{index_name}' checked/created. Duration: {t_duration_idx:.4f}s")
             except Exception as e:
                 log.error(f"Ошибка создания индекса {index_name}: {e}")
+
+        # --- Добавление недостающих колонок (миграции) ---
+        columns_to_add = [
+            ('users', 'login_streak', 'INTEGER DEFAULT 0'),
+            ('users', 'last_login_date', 'DATE DEFAULT NULL'),
+            ('users', 'clicks_since_captcha', 'INTEGER DEFAULT 0'),
+            ('users', 'captcha_answer', 'TEXT DEFAULT NULL'),
+            ('users', 'captcha_expires', 'TIMESTAMPTZ DEFAULT NULL'),
+        ]
+        for table, col, col_def in columns_to_add:
+            try:
+                await conn.execute(f'''
+                    DO $$ BEGIN
+                        ALTER TABLE {table} ADD COLUMN {col} {col_def};
+                    EXCEPTION WHEN duplicate_column THEN NULL;
+                    END $$;
+                ''')
+            except Exception as e:
+                log.debug(f"Column {table}.{col} migration: {e}")
 
     duration = time.monotonic() - start_time
     log.info(f"Проверка таблиц и индексов PostgreSQL завершена. Duration: {duration:.4f}s")
@@ -2096,3 +2139,195 @@ async def get_all_user_ids() -> list:
     async with db_pool.acquire() as conn:
         rows = await conn.fetch("SELECT id FROM users")
         return [row['id'] for row in rows]
+
+
+# --- Огонёк (Streak) ---
+
+DEFAULT_STREAK_DAYS = 10
+DEFAULT_STREAK_REWARD = 15.0
+
+
+async def get_streak_days_required() -> int:
+    value = await get_config_value('streak_days_required', default_value=str(DEFAULT_STREAK_DAYS))
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return DEFAULT_STREAK_DAYS
+
+
+async def get_streak_reward() -> float:
+    value = await get_config_value('streak_reward', default_value=str(DEFAULT_STREAK_REWARD))
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return DEFAULT_STREAK_REWARD
+
+
+async def update_user_streak(user_id: int) -> dict:
+    """
+    Обновляет стрик пользователя при входе.
+    Возвращает: {streak, reward_given, reward_amount, already_logged}
+    """
+    if not db_pool:
+        return {'streak': 0, 'reward_given': False, 'reward_amount': 0, 'already_logged': False}
+
+    today = date.today()
+
+    async with db_pool.acquire() as conn:
+        row = await conn.fetchrow(
+            'SELECT login_streak, last_login_date FROM users WHERE id = $1', user_id
+        )
+        if not row:
+            return {'streak': 0, 'reward_given': False, 'reward_amount': 0, 'already_logged': False}
+
+        current_streak = row['login_streak'] or 0
+        last_login = row['last_login_date']
+
+        if last_login == today:
+            return {'streak': current_streak, 'reward_given': False, 'reward_amount': 0, 'already_logged': True}
+
+        yesterday = today - timedelta(days=1)
+
+        if last_login == yesterday:
+            new_streak = current_streak + 1
+        else:
+            new_streak = 1
+
+        await conn.execute(
+            'UPDATE users SET login_streak = $1, last_login_date = $2 WHERE id = $3',
+            new_streak, today, user_id
+        )
+
+        streak_days_required = await get_streak_days_required()
+        reward_given = False
+        reward_amount = 0.0
+
+        if streak_days_required > 0 and new_streak > 0 and new_streak % streak_days_required == 0:
+            reward_amount = await get_streak_reward()
+            if reward_amount > 0:
+                await conn.execute('UPDATE users SET stars = stars + $1 WHERE id = $2', reward_amount, user_id)
+                reward_given = True
+                log.info(f"User {user_id} reached streak {new_streak}, awarded {reward_amount} stars")
+
+        return {
+            'streak': new_streak,
+            'reward_given': reward_given,
+            'reward_amount': reward_amount,
+            'already_logged': False
+        }
+
+
+async def get_user_streak(user_id: int) -> int:
+    if not db_pool: return 0
+    async with db_pool.acquire() as conn:
+        val = await conn.fetchval('SELECT login_streak FROM users WHERE id = $1', user_id)
+        return val or 0
+
+
+# --- Прокси-магазин ---
+
+async def add_proxy(proxy_type: str, address: str, price: float) -> int:
+    if not db_pool: return 0
+    async with db_pool.acquire() as conn:
+        proxy_id = await conn.fetchval(
+            'INSERT INTO proxies (proxy_type, address, price) VALUES ($1, $2, $3) RETURNING id',
+            proxy_type, address, price
+        )
+        log.info(f"Proxy added: id={proxy_id}, type={proxy_type}, price={price}")
+        return proxy_id
+
+
+async def get_available_proxies() -> list:
+    if not db_pool: return []
+    async with db_pool.acquire() as conn:
+        rows = await conn.fetch(
+            'SELECT id, proxy_type, price, added_at FROM proxies WHERE is_sold = FALSE ORDER BY price ASC'
+        )
+        return [dict(r) for r in rows]
+
+
+async def get_all_proxies(include_sold=False) -> list:
+    if not db_pool: return []
+    async with db_pool.acquire() as conn:
+        if include_sold:
+            rows = await conn.fetch('SELECT * FROM proxies ORDER BY id DESC')
+        else:
+            rows = await conn.fetch('SELECT * FROM proxies WHERE is_sold = FALSE ORDER BY id DESC')
+        return [dict(r) for r in rows]
+
+
+async def get_proxy_by_id(proxy_id: int):
+    if not db_pool: return None
+    async with db_pool.acquire() as conn:
+        row = await conn.fetchrow('SELECT * FROM proxies WHERE id = $1', proxy_id)
+        return dict(row) if row else None
+
+
+async def buy_proxy(user_id: int, proxy_id: int) -> tuple:
+    if not db_pool:
+        return False, "❌ Ошибка БД.", None
+
+    async with db_pool.acquire() as conn:
+        async with conn.transaction():
+            proxy = await conn.fetchrow(
+                'SELECT * FROM proxies WHERE id = $1 AND is_sold = FALSE FOR UPDATE', proxy_id
+            )
+            if not proxy:
+                return False, "❌ Прокси не найден или уже продан.", None
+
+            price = proxy['price']
+            address = proxy['address']
+
+            user = await conn.fetchrow('SELECT stars FROM users WHERE id = $1 FOR UPDATE', user_id)
+            if not user:
+                return False, "❌ Пользователь не найден.", None
+
+            if user['stars'] < price:
+                return False, f"❌ Недостаточно звёзд! Нужно: {price:.2f}⭐, у тебя: {user['stars']:.2f}⭐", None
+
+            await conn.execute('UPDATE users SET stars = stars - $1 WHERE id = $2', price, user_id)
+            await conn.execute(
+                'UPDATE proxies SET is_sold = TRUE, sold_to = $1, sold_at = CURRENT_TIMESTAMP WHERE id = $2',
+                user_id, proxy_id
+            )
+            await conn.execute(
+                'INSERT INTO proxy_purchases (user_id, proxy_id, price) VALUES ($1, $2, $3)',
+                user_id, proxy_id, price
+            )
+
+            log.info(f"User {user_id} bought proxy {proxy_id} for {price} stars")
+            return True, f"✅ Прокси куплен за {price:.2f}⭐!", address
+
+
+async def delete_proxy(proxy_id: int) -> bool:
+    if not db_pool: return False
+    async with db_pool.acquire() as conn:
+        result = await conn.execute('DELETE FROM proxies WHERE id = $1 AND is_sold = FALSE', proxy_id)
+        deleted = result.split()[-1] != '0'
+        if deleted:
+            log.info(f"Proxy {proxy_id} deleted from shop")
+        return deleted
+
+
+async def get_user_purchased_proxies(user_id: int) -> list:
+    if not db_pool: return []
+    async with db_pool.acquire() as conn:
+        rows = await conn.fetch('''
+            SELECT p.id, p.proxy_type, p.address, p.price, pp.purchased_at
+            FROM proxy_purchases pp
+            JOIN proxies p ON pp.proxy_id = p.id
+            WHERE pp.user_id = $1
+            ORDER BY pp.purchased_at DESC
+        ''', user_id)
+        return [dict(r) for r in rows]
+
+
+async def get_proxy_stats() -> dict:
+    if not db_pool:
+        return {'total': 0, 'available': 0, 'sold': 0, 'revenue': 0}
+    async with db_pool.acquire() as conn:
+        total = await conn.fetchval("SELECT COUNT(*) FROM proxies")
+        available = await conn.fetchval("SELECT COUNT(*) FROM proxies WHERE is_sold = FALSE")
+        sold = await conn.fetchval("SELECT COUNT(*) FROM proxies WHERE is_sold = TRUE")
+        revenue = await conn.fetchval("SELECT COALESCE(SUM(price), 0) FROM proxies WHERE is_sold = TRUE")
+        return {'total': total, 'available': available, 'sold': sold, 'revenue': revenue}
