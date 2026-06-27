@@ -29,9 +29,33 @@ from keyboards import (
     get_mini_games_keyboard, get_luck_game_keyboard,
     create_slot_button, create_bet_inline_keyboard, create_back_button
 )
-from states import SlotState
+from states import SlotState, MiniAppCaptchaState
 
 log = logging.getLogger('handlers.user_games')
+
+CAPTCHA_TIMEOUT_SECONDS = 60
+
+
+def generate_webapp_captcha():
+    """Генерирует простую математическую капчу для входа в мини-аппы."""
+    operations = [
+        ('+', lambda a, b: a + b),
+        ('-', lambda a, b: a - b),
+        ('×', lambda a, b: a * b),
+    ]
+    op_symbol, op_func = random.choice(operations)
+    if op_symbol == '×':
+        a = random.randint(2, 9)
+        b = random.randint(2, 9)
+    elif op_symbol == '-':
+        a = random.randint(5, 20)
+        b = random.randint(1, a)
+    else:
+        a = random.randint(1, 20)
+        b = random.randint(1, 20)
+    answer = op_func(a, b)
+    question = f"{a} {op_symbol} {b} = ?"
+    return question, str(answer)
 
 
 async def _send_or_edit_photo_message(message_or_call, image_path, caption, markup, parse_mode="HTML",
@@ -136,7 +160,7 @@ async def _send_or_edit_photo_message(message_or_call, image_path, caption, mark
             log.error(f"Final fallback send failed for user {user_id}: {final_err}")
 
 
-async def show_mini_games_menu(call: CallbackQuery, bot: Bot):
+async def show_mini_games_menu(call: CallbackQuery, bot: Bot, state: FSMContext):
     user_id = call.from_user.id
     try:
         await call.answer()
@@ -149,11 +173,73 @@ async def show_mini_games_menu(call: CallbackQuery, bot: Bot):
         await bot.send_message(user_id, "Вы заблокированы.")
         return
 
-    dynamic_wheel_url = f"{WEBHOOK_HOST}/"
-    markup = get_mini_games_keyboard(user_id, dynamic_wheel_url)
-    image_path = "images/minegame.jpg"
-    caption = "🎮 <b>Добро пожаловать в мини-игры!</b>\n\nВыбери игру, чтобы начать:"
-    await _send_or_edit_photo_message(call, image_path, caption, markup, disable_preview=True)
+    # --- Капча перед запуском мини-аппа ---
+    question, answer = generate_webapp_captcha()
+    await state.set_state(MiniAppCaptchaState.waiting_for_answer)
+    await state.update_data(captcha_answer=answer)
+    log.info(f"Mini-app captcha for user {user_id}: {question} (answer={answer})")
+
+    captcha_markup = InlineKeyboardMarkup()
+    captcha_markup.add(InlineKeyboardButton("❌ Отмена", callback_data="back_main"))
+
+    chat_id = call.message.chat.id
+    await bot.send_message(
+        chat_id,
+        f"🤖 <b>Проверка: Вы не бот?</b>\n\n"
+        f"Реши пример, чтобы открыть мини-игры:\n"
+        f"<code>{question}</code>\n\n"
+        f"⏱ {CAPTCHA_TIMEOUT_SECONDS} сек. Отправь ответ в чат.",
+        parse_mode="HTML",
+        reply_markup=captcha_markup
+    )
+
+
+async def handle_miniapp_captcha_answer(message: types.Message, bot: Bot, state: FSMContext):
+    """Обработка ответа на капчу мини-аппа."""
+    user_id = message.from_user.id
+    chat_id = message.chat.id
+
+    data = await state.get_data()
+    correct_answer = data.get('captcha_answer')
+
+    if not correct_answer:
+        await state.finish()
+        return
+
+    user_answer = message.text.strip()
+
+    if user_answer == correct_answer:
+        await state.finish()
+        log.info(f"User {user_id} solved mini-app captcha correctly")
+
+        try:
+            await message.delete()
+        except (MessageCantBeDeleted, MessageToDeleteNotFound):
+            pass
+
+        # --- Показываем меню мини-игр ---
+        dynamic_wheel_url = f"{WEBHOOK_HOST}/"
+        markup = get_mini_games_keyboard(user_id, dynamic_wheel_url)
+        image_path = "images/minegame.jpg"
+        caption = "🎮 <b>Добро пожаловать в мини-игры!</b>\n\nВыбери игру, чтобы начать:"
+        await _send_or_edit_photo_message(message, image_path, caption, markup, disable_preview=True)
+    else:
+        log.warning(f"User {user_id} failed mini-app captcha: expected={correct_answer}, got={user_answer}")
+        sent_msg = await bot.send_message(chat_id, "❌ Неверно! Попробуй ещё раз.")
+        try:
+            await message.delete()
+        except (MessageCantBeDeleted, MessageToDeleteNotFound):
+            pass
+        # Автоудаление ошибки через 3 сек
+        asyncio.create_task(_delete_msg_after(sent_msg, 3))
+
+
+async def _delete_msg_after(msg: types.Message, delay: int):
+    await asyncio.sleep(delay)
+    try:
+        await msg.delete()
+    except Exception:
+        pass
 
 
 async def play_luck_game_callback(call: CallbackQuery, bot: Bot):
@@ -634,8 +720,13 @@ async def process_slot_bet(chat_id, user_id, bet_amount, state: FSMContext, bot:
 
 
 def register_user_game_handlers(dp: Dispatcher, bot: Bot):
-    dp.register_callback_query_handler(lambda call: show_mini_games_menu(call, bot), lambda c: c.data == "mini_games",
-                                       state="*")
+    dp.register_callback_query_handler(lambda call, state: show_mini_games_menu(call, bot, state),
+                                       lambda c: c.data == "mini_games", state="*")
+    # Обработчик ответа на капчу мини-аппа
+    dp.register_message_handler(
+        lambda msg, state: handle_miniapp_captcha_answer(msg, bot, state),
+        state=MiniAppCaptchaState.waiting_for_answer
+    )
     dp.register_callback_query_handler(lambda call: play_luck_game_callback(call, bot), lambda c: c.data == "play_game",
                                        state="*")
     dp.register_callback_query_handler(lambda call: robbery_game_callback(call, bot),
