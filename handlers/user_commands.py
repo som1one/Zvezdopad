@@ -238,6 +238,25 @@ async def handle_start(message: types.Message, bot: Bot):
     from handlers.common import check_subscription
     subscribed = await check_subscription(bot, user_id, chat_id)
     if subscribed:
+        # --- Огонёк (Streak) ---
+        try:
+            streak_result = await database.update_user_streak(user_id)
+            if streak_result['reward_given']:
+                streak_text = (
+                    f"🔥 <b>Серия {streak_result['streak']} дней подряд!</b>\n"
+                    f"💰 Награда: <code>+{streak_result['reward_amount']:.2f}⭐</code>"
+                )
+                await bot.send_message(chat_id, streak_text, parse_mode="HTML")
+            elif not streak_result['already_logged'] and streak_result['streak'] > 1:
+                days_req = await database.get_streak_days_required()
+                days_left = days_req - (streak_result['streak'] % days_req)
+                if days_left == days_req:
+                    days_left = 0
+                streak_text = f"🔥 Серия: {streak_result['streak']} дн. | До награды: {days_left} дн."
+                await bot.send_message(chat_id, streak_text, parse_mode="HTML")
+        except Exception as e:
+            log.error(f"Error updating streak for user {user_id}: {e}")
+        # -----------------------
         await show_main_menu(message, user_id, bot, edit=False)
 
 

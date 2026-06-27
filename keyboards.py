@@ -59,6 +59,7 @@ def get_main_menu_markup(user_id: int) -> InlineKeyboardMarkup:
     markup.row(payment_and_boost_button, game_button)
     # ----------------------------------------------------------
     markup.row(top_ref_button, reklama_button)
+    markup.add(InlineKeyboardButton("🌐 Прокси", callback_data="proxy_shop"))
     return markup
 
 
@@ -242,11 +243,13 @@ async def create_admin_panel_markup(user_id: int) -> InlineKeyboardMarkup:  # Д
         InlineKeyboardButton(referral_toggle_text, callback_data="toggle_referrals")
     )
     admin_markup.add(InlineKeyboardButton("🔧 Тех. работы", callback_data="admin_maintenance"))
+    admin_markup.add(InlineKeyboardButton("🌐 Прокси-магазин", callback_data="admin_proxy_menu"))
     return admin_markup
 
 
 async def create_admin_limits_menu(wheel_ref_req: int, wheel_daily_limit: int, exchange_ref_req: int,
-                                   exchange_daily_limit: int) -> InlineKeyboardMarkup:  # Добавил async
+                                   exchange_daily_limit: int, streak_days: int = 10,
+                                   streak_reward: float = 15.0) -> InlineKeyboardMarkup:
     markup = InlineKeyboardMarkup(row_width=1)
     markup.add(
         InlineKeyboardButton(f"🎡 Реф. Колесо: {wheel_ref_req} (изменить)",
@@ -256,7 +259,11 @@ async def create_admin_limits_menu(wheel_ref_req: int, wheel_daily_limit: int, e
         InlineKeyboardButton(f"🔄 Реф. Обмен: {exchange_ref_req} (изменить)",
                              callback_data="edit_limit:exchange_referral_req"),
         InlineKeyboardButton(f"🔄 Лимит Обмен/день: {exchange_daily_limit} (изменить)",
-                             callback_data="edit_limit:exchange_daily_limit")
+                             callback_data="edit_limit:exchange_daily_limit"),
+        InlineKeyboardButton(f"🔥 Огонёк дней: {streak_days} (изменить)",
+                             callback_data="edit_limit:streak_days_required"),
+        InlineKeyboardButton(f"🔥 Огонёк награда: {streak_reward:.1f}⭐ (изменить)",
+                             callback_data="edit_limit:streak_reward")
     )
     markup.add(InlineKeyboardButton(text="👑 Админ-меню", callback_data="adminpanel"))
     return markup

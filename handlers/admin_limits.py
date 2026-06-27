@@ -15,7 +15,7 @@ log = logging.getLogger('handlers.admin_limits')
 
 # --- ИСПРАВЛЕНИЕ ОПЕЧАТКИ ЗДЕСЬ ---
 LIMIT_CONFIG = {
-    "wheel_referral_req": {  # <-- ИСПРАВЛЕНО С 'wheel_ref_req'
+    "wheel_referral_req": {
         "state": AdminLimitsState.waiting_for_wheel_ref_req, "prompt_key": "ask_new_limit_wheel_ref",
         "name": "Реф. Колесо", "getter": database.get_wheel_referral_req
     },
@@ -30,6 +30,14 @@ LIMIT_CONFIG = {
     "exchange_daily_limit": {
         "state": AdminLimitsState.waiting_for_exchange_daily_limit, "prompt_key": "ask_new_limit_exchange_daily",
         "name": "Лимит Обмен/день", "getter": database.get_exchange_daily_limit
+    },
+    "streak_days_required": {
+        "state": AdminLimitsState.waiting_for_streak_days_required, "prompt_key": "ask_new_streak_days",
+        "name": "🔥 Огонёк (дней)", "getter": database.get_streak_days_required
+    },
+    "streak_reward": {
+        "state": AdminLimitsState.waiting_for_streak_reward, "prompt_key": "ask_new_streak_reward",
+        "name": "🔥 Огонёк (награда ⭐)", "getter": database.get_streak_reward, "is_float": True
     },
 }
 
@@ -79,7 +87,9 @@ async def show_limits_menu(
         wheel_ref_req=await database.get_wheel_referral_req(),
         wheel_daily_limit=await database.get_wheel_daily_limit(),
         exchange_ref_req=await database.get_exchange_referral_req(),
-        exchange_daily_limit=await database.get_exchange_daily_limit()
+        exchange_daily_limit=await database.get_exchange_daily_limit(),
+        streak_days=await database.get_streak_days_required(),
+        streak_reward=await database.get_streak_reward()
     )
     text = t(user_id, 'admin_limits_menu_title')
 
@@ -149,13 +159,18 @@ async def process_limit_input(message: types.Message, state: FSMContext):
     log.info(f"Admin {admin_id} entered new value for limit '{limit_key}': {message.text}")  # Лог
 
     try:
-        new_value = int(message.text.strip())
+        # streak_reward принимает дробные значения
+        if config.get("is_float"):
+            new_value = float(message.text.strip())
+        else:
+            new_value = int(message.text.strip())
         if new_value < 0: raise ValueError("Value cannot be negative")
 
         await database.set_config_value(limit_key, new_value)
-        log.info(f"Admin {admin_id} successfully updated limit '{limit_key}' to {new_value}")  # Лог
+        log.info(f"Admin {admin_id} successfully updated limit '{limit_key}' to {new_value}")
 
-        success_text = t(admin_id, 'limit_updated_success').format(limit_name=config["name"], value=new_value)
+        display_value = f"{new_value:.1f}" if isinstance(new_value, float) else str(new_value)
+        success_text = t(admin_id, 'limit_updated_success').format(limit_name=config["name"], value=display_value)
         await message.answer(success_text)  # Отправляем сообщение об успехе
 
         await state.finish()  # Завершаем состояние
