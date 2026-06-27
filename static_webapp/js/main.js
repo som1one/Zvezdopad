@@ -44,7 +44,63 @@ export function forceResetState() {
     }
 }
 
+function showCaptchaOverlay() {
+    return new Promise((resolve) => {
+        const overlay = document.getElementById('captcha-overlay');
+        const questionEl = document.getElementById('captcha-question');
+        const buttonsEl = document.getElementById('captcha-buttons');
+        const errorEl = document.getElementById('captcha-error');
+
+        if (!overlay || !questionEl || !buttonsEl) { resolve(true); return; }
+
+        const ops = [
+            ['+', (a, b) => a + b],
+            ['-', (a, b) => a - b],
+            ['×', (a, b) => a * b]
+        ];
+        const [sym, fn] = ops[Math.floor(Math.random() * ops.length)];
+        let a, b;
+        if (sym === '×') { a = 2 + Math.floor(Math.random() * 8); b = 2 + Math.floor(Math.random() * 8); }
+        else if (sym === '-') { a = 5 + Math.floor(Math.random() * 16); b = 1 + Math.floor(Math.random() * a); }
+        else { a = 1 + Math.floor(Math.random() * 20); b = 1 + Math.floor(Math.random() * 20); }
+        const correct = fn(a, b);
+
+        questionEl.textContent = `${a} ${sym} ${b} = ?`;
+
+        const wrongs = new Set();
+        while (wrongs.size < 3) {
+            const w = correct + Math.floor(Math.random() * 11) - 5;
+            if (w !== correct) wrongs.add(w);
+        }
+        const answers = [correct, ...wrongs].sort(() => Math.random() - 0.5);
+
+        buttonsEl.innerHTML = '';
+        answers.forEach(ans => {
+            const btn = document.createElement('button');
+            btn.textContent = ans;
+            btn.style.cssText = 'padding:12px; font-size:18px; border-radius:8px; border:none; background:#3a3a5e; color:#fff; cursor:pointer; font-weight:bold;';
+            btn.onclick = () => {
+                if (ans === correct) {
+                    overlay.style.display = 'none';
+                    resolve(true);
+                } else {
+                    errorEl.style.display = 'block';
+                    setTimeout(() => { errorEl.style.display = 'none'; }, 1500);
+                }
+            };
+            buttonsEl.appendChild(btn);
+        });
+
+        overlay.style.display = 'flex';
+    });
+}
+
 async function initializeApp() {
+    // --- Капча перед загрузкой приложения ---
+    const captchaPassed = await showCaptchaOverlay();
+    if (!captchaPassed) return;
+    // -----------------------------------------
+
     initTheme();
 
     if (!appContainer || !errorMessageEl) {

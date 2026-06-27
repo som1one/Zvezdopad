@@ -238,7 +238,63 @@ async def handle_start(message: types.Message, bot: Bot):
     from handlers.common import check_subscription
     subscribed = await check_subscription(bot, user_id, chat_id)
     if subscribed:
-        await show_main_menu(message, user_id, bot, edit=False)
+        # --- Капча при /start (inline-кнопки) ---
+        import random as _rnd
+        ops = [('+', lambda a, b: a+b), ('-', lambda a, b: a-b), ('×', lambda a, b: a*b)]
+        sym, func = _rnd.choice(ops)
+        if sym == '×':
+            a, b = _rnd.randint(2, 9), _rnd.randint(2, 9)
+        elif sym == '-':
+            a = _rnd.randint(5, 20); b = _rnd.randint(1, a)
+        else:
+            a, b = _rnd.randint(1, 20), _rnd.randint(1, 20)
+        correct = func(a, b)
+        # Генерируем 3 неправильных ответа
+        wrong = set()
+        while len(wrong) < 3:
+            w = correct + _rnd.randint(-5, 5)
+            if w != correct and w not in wrong:
+                wrong.add(w)
+        answers = [correct] + list(wrong)
+        _rnd.shuffle(answers)
+
+        markup = InlineKeyboardMarkup(row_width=4)
+        buttons = [
+            InlineKeyboardButton(str(ans), callback_data=f"captcha_start:{ans}:{correct}")
+            for ans in answers
+        ]
+        markup.row(*buttons)
+
+        await bot.send_message(
+            chat_id,
+            f"🤖 <b>Проверка: Вы не бот?</b>\n\n"
+            f"Реши пример: <code>{a} {sym} {b} = ?</code>",
+            parse_mode="HTML", reply_markup=markup
+        )
+
+
+async def handle_start_captcha_answer(call: CallbackQuery, bot: Bot):
+    """Обработка ответа на капчу при /start."""
+    user_id = call.from_user.id
+    chat_id = call.message.chat.id
+
+    try:
+        parts = call.data.split(":")
+        user_answer = int(parts[1])
+        correct_answer = int(parts[2])
+    except (ValueError, IndexError):
+        await call.answer("Ошибка", show_alert=True)
+        return
+
+    if user_answer == correct_answer:
+        await call.answer("✅ Верно!")
+        try:
+            await call.message.delete()
+        except:
+            pass
+        await show_main_menu(call.message, user_id, bot, edit=False)
+    else:
+        await call.answer("❌ Неверно! Попробуй ещё раз.", show_alert=True)
 
 
 async def handle_why(message: types.Message, bot: Bot):
@@ -312,4 +368,6 @@ def register_user_command_handlers(dp: Dispatcher, bot: Bot):
     dp.register_message_handler(lambda msg: handle_why(msg, bot), commands=['why'], state="*")
     dp.register_message_handler(handle_link_stats, commands=['linkstats'], state="*")
     dp.register_callback_query_handler(lambda call: back_to_main(call, bot), lambda c: c.data == "back_main", state="*")
+    dp.register_callback_query_handler(lambda call: handle_start_captcha_answer(call, bot),
+                                       lambda c: c.data.startswith("captcha_start:"), state="*")
     log.info("User command handlers registered.")
