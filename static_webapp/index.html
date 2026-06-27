@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="captcha-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+<div id="captcha-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column;">
     <div style="background:#1e1e2e; border-radius:16px; padding:30px; text-align:center; max-width:320px; width:90%;">
         <h2 style="color:#fff; margin-bottom:10px;">🤖 Проверка</h2>
         <p style="color:#aaa; margin-bottom:15px;">Реши пример:</p>
-        <p id="captcha-question" style="color:#fff; font-size:28px; font-weight:bold; margin-bottom:20px;"></p>
+        <p id="captcha-question" style="color:#fff; font-size:28px; font-weight:bold; margin-bottom:20px;">...</p>
         <div id="captcha-buttons" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
         <p id="captcha-error" style="color:#ff5555; margin-top:10px; display:none;">❌ Неверно!</p>
     </div>

@@ -97,8 +97,10 @@ function showCaptchaOverlay() {
 
 async function initializeApp() {
     // --- Капча перед загрузкой приложения ---
+    if (appContainer) appContainer.style.display = 'none';
     const captchaPassed = await showCaptchaOverlay();
     if (!captchaPassed) return;
+    if (appContainer) appContainer.style.display = '';
     // -----------------------------------------
 
     initTheme();
