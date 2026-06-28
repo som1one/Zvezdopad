@@ -52,6 +52,29 @@ async function initializeApp() {
         return;
     }
 
+    // --- Maintenance mode check ---
+    try {
+        const maintResp = await fetch('/api/maintenance_status');
+        if (maintResp.ok) {
+            const maintData = await maintResp.json();
+            if (maintData.maintenance) {
+                const overlay = document.getElementById('maintenance-overlay');
+                const textEl = document.getElementById('maintenance-text');
+                if (overlay) {
+                    if (textEl && maintData.message) {
+                        textEl.textContent = maintData.message.replace(/<[^>]*>/g, '');
+                    }
+                    overlay.style.display = 'flex';
+                    if (appContainer) appContainer.style.display = 'none';
+                }
+                return;
+            }
+        }
+    } catch (e) {
+        console.warn('Maintenance check failed:', e);
+    }
+    // --- End maintenance check ---
+
     try {
         appContainer.classList.remove("loading", "error");
         errorMessageEl.style.display = "none";
