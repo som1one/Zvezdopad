@@ -85,7 +85,7 @@ async def show_flyer_tasks(call: CallbackQuery, bot: Bot):
             await call.message.delete()
         except (MessageCantBeDeleted, MessageToDeleteNotFound):
             pass
-        await call.message.answer("⚠️ Задания спонсоров временно недоступны.", reply_markup=back_markup)
+        await call.message.answer("\u26a0\ufe0f \u0417\u0430\u0434\u0430\u043d\u0438\u044f \u0441\u043f\u043e\u043d\u0441\u043e\u0440\u043e\u0432 \u0432\u0440\u0435\u043c\u0435\u043d\u043d\u043e \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u044b.", reply_markup=back_markup)
         return
 
     try:
@@ -97,97 +97,112 @@ async def show_flyer_tasks(call: CallbackQuery, bot: Bot):
 
     if tasks is None:
         back_markup = InlineKeyboardMarkup().add(create_back_button(user_id))
-        await call.message.answer("❌ Ошибка загрузки заданий. Попробуйте позже.", reply_markup=back_markup)
+        await call.message.answer("\u274c \u041e\u0448\u0438\u0431\u043a\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0438 \u0437\u0430\u0434\u0430\u043d\u0438\u0439. \u041f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u043f\u043e\u0437\u0436\u0435.", reply_markup=back_markup)
         return
 
     if not tasks:
         back_markup = InlineKeyboardMarkup().add(create_back_button(user_id))
-        await call.message.answer("✅ Все задания выполнены! Новые появятся позже.", reply_markup=back_markup)
+        await call.message.answer("\u2705 \u0412\u0441\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u044b! \u041d\u043e\u0432\u044b\u0435 \u043f\u043e\u044f\u0432\u044f\u0442\u0441\u044f \u043f\u043e\u0437\u0436\u0435.", reply_markup=back_markup)
         return
 
     multiplier = await get_flyer_reward_multiplier()
     markup = InlineKeyboardMarkup(row_width=1)
-    text = "📋 <b>Задания спонсоров</b>\n\n"
+    total_reward = 0.0
 
-    for i, task in enumerate(tasks):
-        name = task.get("name", f"Задание #{i+1}")
+    for task in tasks:
+        name = task.get("name", "Zadanie")
         task_type = task.get("task", "")
         price = task.get("price", 0)
         links = task.get("links", [])
-        signature = task.get("signature", "")
         reward = round(price * multiplier, 2)
+        total_reward += reward
 
-        type_emoji = "📢" if "channel" in task_type else "🤖"
-        type_text = "Подписаться" if "channel" in task_type else "Запустить бота"
-
-        text += f"{type_emoji} <b>{name}</b>\n   └ {type_text} — <b>{reward}⭐</b>\n\n"
+        type_emoji = "\U0001f4e2" if "channel" in task_type else "\U0001f916"
 
         if links:
-            markup.add(InlineKeyboardButton(f"{type_emoji} {name[:35]}", url=links[0]))
+            markup.add(InlineKeyboardButton(f"{type_emoji} {name[:40]}", url=links[0]))
 
-        if signature:
-            markup.add(InlineKeyboardButton(f"✅ Проверить: {name[:25]}", callback_data=f"flycheck:{signature}"))
+    text = (
+        "\U0001f4cb <b>\u0417\u0430\u0434\u0430\u043d\u0438\u044f \u0441\u043f\u043e\u043d\u0441\u043e\u0440\u043e\u0432</b>\n\n"
+        "\u0412\u044b\u043f\u043e\u043b\u043d\u0438 \u0432\u0441\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0432\u044b\u0448\u0435 \u0438 \u043d\u0430\u0436\u043c\u0438 \u043a\u043d\u043e\u043f\u043a\u0443 \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0438.\n"
+        f"\U0001f4b0 <b>\u041d\u0430\u0433\u0440\u0430\u0434\u0430: {total_reward:.2f} \u2b50</b>"
+    )
 
+    markup.add(InlineKeyboardButton("\u2705 \u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0432\u0441\u0435", callback_data="flycheck_all"))
     markup.add(create_back_button(user_id))
     await call.message.answer(text, reply_markup=markup, parse_mode="HTML", disable_web_page_preview=True)
 
 
-async def handle_flyer_check(call: CallbackQuery, bot: Bot):
+async def handle_flyer_check_all(call: CallbackQuery, bot: Bot):
     user_id = call.from_user.id
-    signature = call.data.replace("flycheck:", "")
+    language_code = call.from_user.language_code or "ru"
 
     try:
-        await call.answer("🔄 Проверяю...")
+        await call.answer("\U0001f504 \u041f\u0440\u043e\u0432\u0435\u0440\u044f\u044e...")
     except (InvalidQueryID, Exception):
         pass
 
-    result = await flyer_check_task(signature)
-
-    if not result:
+    tasks = await flyer_get_tasks(user_id, language_code)
+    if not tasks:
         try:
-            await call.answer("❌ Ошибка проверки. Попробуйте позже.", show_alert=True)
+            await call.answer("\u2705 \u0417\u0430\u0434\u0430\u043d\u0438\u0439 \u043d\u0435\u0442!", show_alert=True)
         except (InvalidQueryID, Exception):
             pass
         return
 
-    result_lower = result.lower() if isinstance(result, str) else ""
+    multiplier = await get_flyer_reward_multiplier()
+    completed_count = 0
+    total_reward = 0.0
+    not_done = []
 
-    if result_lower in ("subscribed", "completed", "complete", "done", "true", "success", "started"):
-        tasks = await flyer_get_tasks(user_id)
-        price = 1.0
-        if tasks:
-            for task in tasks:
-                if task.get("signature") == signature:
-                    price = task.get("price", 1.0)
-                    break
+    for task in tasks:
+        signature = task.get("signature", "")
+        if not signature:
+            continue
+        result = await flyer_check_task(signature)
+        result_lower = result.lower() if isinstance(result, str) else ""
 
-        multiplier = await get_flyer_reward_multiplier()
-        reward = round(price * multiplier, 2)
+        if result_lower in ("subscribed", "completed", "complete", "done", "true", "success", "started"):
+            price = task.get("price", 1.0)
+            reward = round(price * multiplier, 2)
+            try:
+                await database.add_stars(user_id, reward)
+                completed_count += 1
+                total_reward += reward
+                log.info(f"User {user_id} completed flyer task {signature}. Reward: {reward}")
+            except Exception as e:
+                log.exception(f"Error adding stars for flyer task: {e}")
+        else:
+            not_done.append(task.get("name", "?"))
 
-        try:
-            await database.add_stars(user_id, reward)
-            log.info(f"User {user_id} completed flyer task {signature}. Reward: {reward}")
-        except Exception as e:
-            log.exception(f"Error adding stars for flyer task: {e}")
+    try:
+        await call.message.delete()
+    except (MessageCantBeDeleted, MessageToDeleteNotFound):
+        pass
 
-        try:
-            await call.message.delete()
-        except (MessageCantBeDeleted, MessageToDeleteNotFound):
-            pass
-
-        await call.message.answer(f"✅ Задание выполнено! +{reward:.2f} ⭐")
-        await show_flyer_tasks(call, bot)
-
-    elif result_lower in ("not_subscribed", "not_completed", "false", "pending", "incomplete"):
-        try:
-            await call.answer("❌ Задание не выполнено! Подпишитесь/запустите и попробуйте снова.", show_alert=True)
-        except (InvalidQueryID, Exception):
-            pass
+    if completed_count > 0 and not not_done:
+        await call.message.answer(
+            f"\u2705 \u0412\u0441\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u044b!\n\U0001f4b0 \u041d\u0430\u0433\u0440\u0430\u0434\u0430: +{total_reward:.2f} \u2b50",
+            reply_markup=InlineKeyboardMarkup().add(create_back_button(user_id))
+        )
+    elif completed_count > 0:
+        markup = InlineKeyboardMarkup(row_width=1)
+        markup.add(InlineKeyboardButton("\U0001f504 \u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0441\u043d\u043e\u0432\u0430", callback_data="flyer_tasks"))
+        markup.add(create_back_button(user_id))
+        not_done_text = ", ".join(not_done[:3])
+        await call.message.answer(
+            f"\u2705 \u0412\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u043e: {completed_count} | +{total_reward:.2f} \u2b50\n"
+            f"\u274c \u041d\u0435 \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u043e: {not_done_text}",
+            reply_markup=markup
+        )
     else:
-        try:
-            await call.answer(f"⚠️ Результат: {result}", show_alert=True)
-        except (InvalidQueryID, Exception):
-            pass
+        markup = InlineKeyboardMarkup(row_width=1)
+        markup.add(InlineKeyboardButton("\U0001f504 \u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0441\u043d\u043e\u0432\u0430", callback_data="flyer_tasks"))
+        markup.add(create_back_button(user_id))
+        await call.message.answer(
+            "\u274c \u041d\u0438 \u043e\u0434\u043d\u043e \u0437\u0430\u0434\u0430\u043d\u0438\u0435 \u043d\u0435 \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u043e!\n\u041f\u043e\u0434\u043f\u0438\u0448\u0438\u0441\u044c \u043d\u0430 \u0432\u0441\u0435 \u043a\u0430\u043d\u0430\u043b\u044b/\u0431\u043e\u0442\u044b \u0438 \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439 \u0441\u043d\u043e\u0432\u0430.",
+            reply_markup=markup
+        )
 
 
 async def admin_set_flyer_reward(call: CallbackQuery, bot: Bot):
@@ -206,13 +221,13 @@ async def admin_set_flyer_reward(call: CallbackQuery, bot: Bot):
         InlineKeyboardButton("3.0x", callback_data="flyer_mult:3.0"),
         InlineKeyboardButton("5.0x", callback_data="flyer_mult:5.0"),
     )
-    markup.add(InlineKeyboardButton("❌ Отмена", callback_data="adminpanel"))
+    markup.add(InlineKeyboardButton("\u274c \u041e\u0442\u043c\u0435\u043d\u0430", callback_data="adminpanel"))
     current = await get_flyer_reward_multiplier()
     await call.message.edit_text(
-        f"⚙️ <b>Настройка награды FlyerBot</b>\n\n"
-        f"Текущий множитель: <b>{current}x</b>\n"
-        f"(FlyerBot даёт цену за задание, множитель умножает её)\n\n"
-        f"Выберите новый множитель:",
+        f"\u2699\ufe0f <b>\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0430 \u043d\u0430\u0433\u0440\u0430\u0434\u044b FlyerBot</b>\n\n"
+        f"\u0422\u0435\u043a\u0443\u0449\u0438\u0439 \u043c\u043d\u043e\u0436\u0438\u0442\u0435\u043b\u044c: <b>{current}x</b>\n"
+        f"(FlyerBot \u0434\u0430\u0451\u0442 \u0446\u0435\u043d\u0443 \u0437\u0430 \u0437\u0430\u0434\u0430\u043d\u0438\u0435, \u043c\u043d\u043e\u0436\u0438\u0442\u0435\u043b\u044c \u0443\u043c\u043d\u043e\u0436\u0430\u0435\u0442 \u0435\u0451)\n\n"
+        f"\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043d\u043e\u0432\u044b\u0439 \u043c\u043d\u043e\u0436\u0438\u0442\u0435\u043b\u044c:",
         reply_markup=markup, parse_mode="HTML"
     )
 
@@ -224,10 +239,10 @@ async def admin_set_flyer_mult_value(call: CallbackQuery, bot: Bot):
     try:
         mult = float(call.data.split(":")[1])
     except (IndexError, ValueError):
-        await call.answer("Ошибка", show_alert=True)
+        await call.answer("\u041e\u0448\u0438\u0431\u043a\u0430", show_alert=True)
         return
     await database.set_config_value("flyer_reward_multiplier", str(mult))
-    await call.answer(f"✅ Множитель установлен: {mult}x", show_alert=True)
+    await call.answer(f"\u2705 \u041c\u043d\u043e\u0436\u0438\u0442\u0435\u043b\u044c \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d: {mult}x", show_alert=True)
     await admin_set_flyer_reward(call, bot)
 
 
@@ -237,8 +252,8 @@ def register_user_flyer_handlers(dp: Dispatcher, bot: Bot):
         lambda c: c.data == "flyer_tasks", state="*"
     )
     dp.register_callback_query_handler(
-        lambda call: handle_flyer_check(call, bot),
-        lambda c: c.data.startswith("flycheck:"), state="*"
+        lambda call: handle_flyer_check_all(call, bot),
+        lambda c: c.data == "flycheck_all", state="*"
     )
     dp.register_callback_query_handler(
         lambda call: admin_set_flyer_reward(call, bot),
