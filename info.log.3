@@ -1,0 +1,545 @@
+2026-06-27 07:11:31,702 - root - CRITICAL - Executing on_startup...
+2026-06-27 07:11:31,735 - database - INFO - Пул соединений asyncpg инициализирован (1-50 соединений). Duration: 0.0331s
+2026-06-27 07:11:31,736 - database - INFO - Проверка/создание таблиц и индексов PostgreSQL...
+2026-06-27 07:11:31,736 - database - DEBUG - Table 'users' checked/created. Duration: 0.0007s
+2026-06-27 07:11:31,737 - database - DEBUG - Table 'robberies' checked/created. Duration: 0.0002s
+2026-06-27 07:11:31,737 - database - DEBUG - Table 'custom_rewards' checked/created. Duration: 0.0002s
+2026-06-27 07:11:31,737 - database - DEBUG - Table 'tasks' checked/created. Duration: 0.0001s
+2026-06-27 07:11:31,738 - database - DEBUG - Table 'promocodes' checked/created. Duration: 0.0003s
+2026-06-27 07:11:31,738 - database - DEBUG - Table 'channels' checked/created. Duration: 0.0002s
+2026-06-27 07:11:31,738 - database - DEBUG - Table 'special_links' checked/created. Duration: 0.0002s
+2026-06-27 07:11:31,739 - database - DEBUG - Table 'sponsor_buttons' checked/created. Duration: 0.0002s
+2026-06-27 07:11:31,739 - database - DEBUG - Table 'spent_stars' checked/created. Duration: 0.0002s
+2026-06-27 07:11:31,739 - database - DEBUG - Table 'special_link_visits' checked/created. Duration: 0.0004s
+2026-06-27 07:11:31,740 - database - DEBUG - Table 'block_status' checked/created. Duration: 0.0005s
+2026-06-27 07:11:31,741 - database - DEBUG - Table 'completed_tasks' checked/created. Duration: 0.0007s
+2026-06-27 07:11:31,741 - database - DEBUG - Table 'used_promocodes' checked/created. Duration: 0.0005s
+2026-06-27 07:11:31,742 - database - DEBUG - Table 'config' checked/created. Duration: 0.0005s
+2026-06-27 07:11:31,743 - database - DEBUG - Table 'withdraw_requests' checked/created. Duration: 0.0004s
+2026-06-27 07:11:31,743 - database - DEBUG - Table 'daily_withdrawals' checked/created. Duration: 0.0004s
+2026-06-27 07:11:31,744 - database - DEBUG - Table 'game_history' checked/created. Duration: 0.0006s
+2026-06-27 07:11:31,745 - database - DEBUG - Table 'user_active_boosts' checked/created. Duration: 0.0004s
+2026-06-27 07:11:31,746 - database - DEBUG - Index 'idx_user_active_boosts_user_id_expiration' checked/created. Duration: 0.0011s
+2026-06-27 07:11:31,747 - database - DEBUG - Index 'idx_user_active_boosts_user_id_boost_key_active' checked/created. Duration: 0.0007s
+2026-06-27 07:11:31,748 - database - INFO - Проверка таблиц и индексов PostgreSQL завершена. Duration: 0.0119s
+2026-06-27 07:11:31,748 - root - INFO - Database pool initialized.
+2026-06-27 07:11:31,748 - root - INFO - Setting webhook: https://starsspin.fun/webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:31,870 - root - INFO - Webhook URL already matches.
+2026-06-27 07:11:31,870 - root - INFO - Starting Pyrogram client...
+2026-06-27 07:11:32,332 - root - INFO - Pyrogram client started as @riskant_pubg
+2026-06-27 07:11:32,335 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:32,336 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:32,336 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:32,337 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:32,337 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:32,337 - scheduler - INFO - Starting APScheduler...
+2026-06-27 07:11:32,338 - apscheduler.scheduler - INFO - Added job "update_rewards" to job store "default"
+2026-06-27 07:11:32,338 - apscheduler.scheduler - INFO - Added job "check_inactive_users_task" to job store "default"
+2026-06-27 07:11:32,339 - apscheduler.scheduler - INFO - Added job "check_channels_for_deletion_task" to job store "default"
+2026-06-27 07:11:32,339 - apscheduler.scheduler - INFO - Added job "daily_top_referrer_award_task" to job store "default"
+2026-06-27 07:11:32,339 - apscheduler.scheduler - INFO - Added job "cleanup_abandoned_spins" to job store "default"
+2026-06-27 07:11:32,339 - apscheduler.scheduler - INFO - Scheduler started
+2026-06-27 07:11:32,339 - scheduler - INFO - APScheduler started successfully.
+2026-06-27 07:11:32,339 - root - CRITICAL - Startup process finished.
+2026-06-27 07:11:32,340 - root - CRITICAL - Executing on_shutdown...
+2026-06-27 07:11:32,341 - root - INFO - Attempting to delete webhook...
+2026-06-27 07:11:32,341 - root - INFO - Webhook deleted.
+2026-06-27 07:11:32,341 - root - INFO - Stopping Pyrogram client...
+2026-06-27 07:11:32,344 - root - INFO - Pyrogram client stopped.
+2026-06-27 07:11:32,344 - root - INFO - Closing PostgreSQL connection pool...
+2026-06-27 07:11:32,345 - database - INFO - Закрытие пула соединений asyncpg...
+2026-06-27 07:11:32,346 - database - INFO - Пул соединений asyncpg закрыт.
+2026-06-27 07:11:32,346 - root - INFO - Closing FSM storage...
+2026-06-27 07:11:32,346 - root - INFO - FSM storage closed.
+2026-06-27 07:11:32,346 - root - INFO - Closing bot session...
+2026-06-27 07:11:32,547 - root - INFO - Bot session closed.
+2026-06-27 07:11:32,547 - root - CRITICAL - Shutdown process complete.
+2026-06-27 07:11:32,548 - root - ERROR - !!! FAILED RUN AIOHTTP (OSError): [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use - Port 8080 busy?
+Traceback (most recent call last):
+  File "/root/Zvezdopad/main.py", line 300, in main
+    aiohttp_web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT, access_log=None)
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web.py", line 502, in run_app
+    loop.run_until_complete(main_task)
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web.py", line 404, in _run_app
+    await site.start()
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web_runner.py", line 138, in start
+    self._server = await loop.create_server(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use
+2026-06-27 07:11:38,695 - root - INFO - File logging (DEBUG level) configured to: info.log
+2026-06-27 07:11:38,695 - root - CRITICAL - Logging configured. Base level: DEBUG, File (Error): ERROR, File (Info): DEBUG.
+2026-06-27 07:11:38,695 - root - CRITICAL - --- SCRIPT main.py STARTED ---
+2026-06-27 07:11:38,695 - root - INFO - Webhook path: /webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:38,695 - root - INFO - Webhook full URL: https://starsspin.fun/webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:38,695 - root - INFO - Initializing Aiogram Bot and Dispatcher...
+2026-06-27 07:11:38,709 - root - INFO - Aiogram initialized.
+2026-06-27 07:11:38,710 - root - INFO - Pyrogram client initialized.
+2026-06-27 07:11:38,710 - root - INFO - Registering Aiogram handlers...
+2026-06-27 07:11:38,710 - handlers - INFO - Registering all handlers for main bot...
+2026-06-27 07:11:38,710 - handlers.webapp - INFO - WebApp data handler registered (handles non-spin actions).
+2026-06-27 07:11:38,711 - handlers.common - INFO - Common handlers registered.
+2026-06-27 07:11:38,711 - handlers.user_commands - INFO - User command handlers registered.
+2026-06-27 07:11:38,712 - handlers.user_menu - INFO - User menu handlers registered (main bot).
+2026-06-27 07:11:38,712 - handlers.user_tasks - INFO - User task handlers registered successfully.
+2026-06-27 07:11:38,713 - handlers.user_farm - INFO - User farming handlers registered.
+2026-06-27 07:11:38,713 - handlers.user_games - INFO - User game handlers registered.
+2026-06-27 07:11:38,714 - handlers.user_withdrawal - INFO - User withdrawal handlers registered.
+2026-06-27 07:11:38,714 - handlers.admin_panel - INFO - Admin panel handlers registered.
+2026-06-27 07:11:38,715 - handlers.admin_users - INFO - Admin user management handlers registered.
+2026-06-27 07:11:38,716 - handlers.admin_broadcast - INFO - Admin broadcast handlers registered.
+2026-06-27 07:11:38,717 - handlers.admin_channels - INFO - Admin channel management handlers registered.
+2026-06-27 07:11:38,718 - handlers.admin_tasks - INFO - Admin task management handlers registered.
+2026-06-27 07:11:38,718 - handlers.admin_promocodes - INFO - Admin promocode management handlers registered.
+2026-06-27 07:11:38,719 - handlers.admin_op - INFO - Admin OP management handlers registered.
+2026-06-27 07:11:38,720 - handlers.admin_withdrawal - INFO - Admin withdrawal handlers registered.
+2026-06-27 07:11:38,721 - handlers.admin_direct_message - INFO - Admin direct message handlers registered.
+2026-06-27 07:11:38,721 - handlers.admin_other - INFO - Admin other handlers (including direct message) registered.
+2026-06-27 07:11:38,722 - handlers.admin_limits - INFO - Admin limits management handlers registered.
+2026-06-27 07:11:38,722 - handlers.admin_maintenance - INFO - Admin maintenance handlers registered.
+2026-06-27 07:11:38,722 - handlers.inline_query - INFO - Inline query handler registered.
+2026-06-27 07:11:38,722 - handlers - INFO - All main bot handlers registered.
+2026-06-27 07:11:38,722 - root - INFO - Aiogram handlers registered.
+2026-06-27 07:11:38,722 - root - INFO - Creating aiohttp web application...
+2026-06-27 07:11:38,722 - root - INFO - aiohttp application created.
+2026-06-27 07:11:38,722 - root - INFO - Configuring static file serving...
+2026-06-27 07:11:38,722 - root - INFO - Static files root: /root/Zvezdopad/static_webapp
+2026-06-27 07:11:38,723 - root - INFO - Static routes configured.
+2026-06-27 07:11:38,723 - root - INFO - Registering API routes...
+2026-06-27 07:11:38,723 - root - INFO - API routes registered.
+2026-06-27 07:11:38,723 - root - INFO - Configuring Aiogram webhook handler: /webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:38,723 - root - INFO - Aiogram webhook configured.
+2026-06-27 07:11:38,723 - root - INFO - on_startup/on_shutdown handlers registered.
+2026-06-27 07:11:38,723 - root - INFO - Starting aiohttp web server 0.0.0.0:8080
+2026-06-27 07:11:38,723 - asyncio - DEBUG - Using selector: EpollSelector
+2026-06-27 07:11:38,726 - root - CRITICAL - Executing on_startup...
+2026-06-27 07:11:38,748 - database - INFO - Пул соединений asyncpg инициализирован (1-50 соединений). Duration: 0.0224s
+2026-06-27 07:11:38,748 - database - INFO - Проверка/создание таблиц и индексов PostgreSQL...
+2026-06-27 07:11:38,749 - database - DEBUG - Table 'users' checked/created. Duration: 0.0006s
+2026-06-27 07:11:38,750 - database - DEBUG - Table 'robberies' checked/created. Duration: 0.0004s
+2026-06-27 07:11:38,751 - database - DEBUG - Table 'custom_rewards' checked/created. Duration: 0.0007s
+2026-06-27 07:11:38,751 - database - DEBUG - Table 'tasks' checked/created. Duration: 0.0002s
+2026-06-27 07:11:38,751 - database - DEBUG - Table 'promocodes' checked/created. Duration: 0.0004s
+2026-06-27 07:11:38,752 - database - DEBUG - Table 'channels' checked/created. Duration: 0.0002s
+2026-06-27 07:11:38,752 - database - DEBUG - Table 'special_links' checked/created. Duration: 0.0002s
+2026-06-27 07:11:38,753 - database - DEBUG - Table 'sponsor_buttons' checked/created. Duration: 0.0002s
+2026-06-27 07:11:38,753 - database - DEBUG - Table 'spent_stars' checked/created. Duration: 0.0004s
+2026-06-27 07:11:38,753 - database - DEBUG - Table 'special_link_visits' checked/created. Duration: 0.0003s
+2026-06-27 07:11:38,754 - database - DEBUG - Table 'block_status' checked/created. Duration: 0.0002s
+2026-06-27 07:11:38,754 - database - DEBUG - Table 'completed_tasks' checked/created. Duration: 0.0003s
+2026-06-27 07:11:38,754 - database - DEBUG - Table 'used_promocodes' checked/created. Duration: 0.0003s
+2026-06-27 07:11:38,755 - database - DEBUG - Table 'config' checked/created. Duration: 0.0003s
+2026-06-27 07:11:38,755 - database - DEBUG - Table 'withdraw_requests' checked/created. Duration: 0.0002s
+2026-06-27 07:11:38,755 - database - DEBUG - Table 'daily_withdrawals' checked/created. Duration: 0.0002s
+2026-06-27 07:11:38,756 - database - DEBUG - Table 'game_history' checked/created. Duration: 0.0002s
+2026-06-27 07:11:38,756 - database - DEBUG - Table 'user_active_boosts' checked/created. Duration: 0.0002s
+2026-06-27 07:11:38,757 - database - DEBUG - Index 'idx_user_active_boosts_user_id_expiration' checked/created. Duration: 0.0007s
+2026-06-27 07:11:38,757 - database - DEBUG - Index 'idx_user_active_boosts_user_id_boost_key_active' checked/created. Duration: 0.0004s
+2026-06-27 07:11:38,758 - database - INFO - Проверка таблиц и индексов PostgreSQL завершена. Duration: 0.0093s
+2026-06-27 07:11:38,758 - root - INFO - Database pool initialized.
+2026-06-27 07:11:38,758 - root - INFO - Setting webhook: https://starsspin.fun/webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:38,895 - root - INFO - Webhook URL already matches.
+2026-06-27 07:11:38,895 - root - INFO - Starting Pyrogram client...
+2026-06-27 07:11:39,342 - root - INFO - Pyrogram client started as @riskant_pubg
+2026-06-27 07:11:39,344 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:39,345 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:39,345 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:39,346 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:39,346 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:39,346 - scheduler - INFO - Starting APScheduler...
+2026-06-27 07:11:39,347 - apscheduler.scheduler - INFO - Added job "update_rewards" to job store "default"
+2026-06-27 07:11:39,347 - apscheduler.scheduler - INFO - Added job "check_inactive_users_task" to job store "default"
+2026-06-27 07:11:39,347 - apscheduler.scheduler - INFO - Added job "check_channels_for_deletion_task" to job store "default"
+2026-06-27 07:11:39,347 - apscheduler.scheduler - INFO - Added job "daily_top_referrer_award_task" to job store "default"
+2026-06-27 07:11:39,347 - apscheduler.scheduler - INFO - Added job "cleanup_abandoned_spins" to job store "default"
+2026-06-27 07:11:39,347 - apscheduler.scheduler - INFO - Scheduler started
+2026-06-27 07:11:39,347 - scheduler - INFO - APScheduler started successfully.
+2026-06-27 07:11:39,347 - root - CRITICAL - Startup process finished.
+2026-06-27 07:11:39,348 - root - CRITICAL - Executing on_shutdown...
+2026-06-27 07:11:39,348 - root - INFO - Attempting to delete webhook...
+2026-06-27 07:11:39,348 - root - INFO - Webhook deleted.
+2026-06-27 07:11:39,348 - root - INFO - Stopping Pyrogram client...
+2026-06-27 07:11:39,352 - root - INFO - Pyrogram client stopped.
+2026-06-27 07:11:39,352 - root - INFO - Closing PostgreSQL connection pool...
+2026-06-27 07:11:39,352 - database - INFO - Закрытие пула соединений asyncpg...
+2026-06-27 07:11:39,354 - database - INFO - Пул соединений asyncpg закрыт.
+2026-06-27 07:11:39,354 - root - INFO - Closing FSM storage...
+2026-06-27 07:11:39,354 - root - INFO - FSM storage closed.
+2026-06-27 07:11:39,354 - root - INFO - Closing bot session...
+2026-06-27 07:11:39,555 - root - INFO - Bot session closed.
+2026-06-27 07:11:39,555 - root - CRITICAL - Shutdown process complete.
+2026-06-27 07:11:39,556 - root - ERROR - !!! FAILED RUN AIOHTTP (OSError): [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use - Port 8080 busy?
+Traceback (most recent call last):
+  File "/root/Zvezdopad/main.py", line 300, in main
+    aiohttp_web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT, access_log=None)
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web.py", line 502, in run_app
+    loop.run_until_complete(main_task)
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web.py", line 404, in _run_app
+    await site.start()
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web_runner.py", line 138, in start
+    self._server = await loop.create_server(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use
+2026-06-27 07:11:45,617 - root - INFO - File logging (DEBUG level) configured to: info.log
+2026-06-27 07:11:45,617 - root - CRITICAL - Logging configured. Base level: DEBUG, File (Error): ERROR, File (Info): DEBUG.
+2026-06-27 07:11:45,617 - root - CRITICAL - --- SCRIPT main.py STARTED ---
+2026-06-27 07:11:45,618 - root - INFO - Webhook path: /webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:45,618 - root - INFO - Webhook full URL: https://starsspin.fun/webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:45,618 - root - INFO - Initializing Aiogram Bot and Dispatcher...
+2026-06-27 07:11:45,631 - root - INFO - Aiogram initialized.
+2026-06-27 07:11:45,632 - root - INFO - Pyrogram client initialized.
+2026-06-27 07:11:45,632 - root - INFO - Registering Aiogram handlers...
+2026-06-27 07:11:45,632 - handlers - INFO - Registering all handlers for main bot...
+2026-06-27 07:11:45,632 - handlers.webapp - INFO - WebApp data handler registered (handles non-spin actions).
+2026-06-27 07:11:45,633 - handlers.common - INFO - Common handlers registered.
+2026-06-27 07:11:45,633 - handlers.user_commands - INFO - User command handlers registered.
+2026-06-27 07:11:45,634 - handlers.user_menu - INFO - User menu handlers registered (main bot).
+2026-06-27 07:11:45,634 - handlers.user_tasks - INFO - User task handlers registered successfully.
+2026-06-27 07:11:45,634 - handlers.user_farm - INFO - User farming handlers registered.
+2026-06-27 07:11:45,635 - handlers.user_games - INFO - User game handlers registered.
+2026-06-27 07:11:45,635 - handlers.user_withdrawal - INFO - User withdrawal handlers registered.
+2026-06-27 07:11:45,635 - handlers.admin_panel - INFO - Admin panel handlers registered.
+2026-06-27 07:11:45,636 - handlers.admin_users - INFO - Admin user management handlers registered.
+2026-06-27 07:11:45,637 - handlers.admin_broadcast - INFO - Admin broadcast handlers registered.
+2026-06-27 07:11:45,638 - handlers.admin_channels - INFO - Admin channel management handlers registered.
+2026-06-27 07:11:45,638 - handlers.admin_tasks - INFO - Admin task management handlers registered.
+2026-06-27 07:11:45,639 - handlers.admin_promocodes - INFO - Admin promocode management handlers registered.
+2026-06-27 07:11:45,639 - handlers.admin_op - INFO - Admin OP management handlers registered.
+2026-06-27 07:11:45,640 - handlers.admin_withdrawal - INFO - Admin withdrawal handlers registered.
+2026-06-27 07:11:45,641 - handlers.admin_direct_message - INFO - Admin direct message handlers registered.
+2026-06-27 07:11:45,641 - handlers.admin_other - INFO - Admin other handlers (including direct message) registered.
+2026-06-27 07:11:45,642 - handlers.admin_limits - INFO - Admin limits management handlers registered.
+2026-06-27 07:11:45,643 - handlers.admin_maintenance - INFO - Admin maintenance handlers registered.
+2026-06-27 07:11:45,643 - handlers.inline_query - INFO - Inline query handler registered.
+2026-06-27 07:11:45,643 - handlers - INFO - All main bot handlers registered.
+2026-06-27 07:11:45,643 - root - INFO - Aiogram handlers registered.
+2026-06-27 07:11:45,643 - root - INFO - Creating aiohttp web application...
+2026-06-27 07:11:45,643 - root - INFO - aiohttp application created.
+2026-06-27 07:11:45,644 - root - INFO - Configuring static file serving...
+2026-06-27 07:11:45,644 - root - INFO - Static files root: /root/Zvezdopad/static_webapp
+2026-06-27 07:11:45,644 - root - INFO - Static routes configured.
+2026-06-27 07:11:45,644 - root - INFO - Registering API routes...
+2026-06-27 07:11:45,644 - root - INFO - API routes registered.
+2026-06-27 07:11:45,645 - root - INFO - Configuring Aiogram webhook handler: /webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:45,645 - root - INFO - Aiogram webhook configured.
+2026-06-27 07:11:45,645 - root - INFO - on_startup/on_shutdown handlers registered.
+2026-06-27 07:11:45,645 - root - INFO - Starting aiohttp web server 0.0.0.0:8080
+2026-06-27 07:11:45,645 - asyncio - DEBUG - Using selector: EpollSelector
+2026-06-27 07:11:45,646 - root - CRITICAL - Executing on_startup...
+2026-06-27 07:11:45,670 - database - INFO - Пул соединений asyncpg инициализирован (1-50 соединений). Duration: 0.0238s
+2026-06-27 07:11:45,670 - database - INFO - Проверка/создание таблиц и индексов PostgreSQL...
+2026-06-27 07:11:45,671 - database - DEBUG - Table 'users' checked/created. Duration: 0.0006s
+2026-06-27 07:11:45,672 - database - DEBUG - Table 'robberies' checked/created. Duration: 0.0003s
+2026-06-27 07:11:45,672 - database - DEBUG - Table 'custom_rewards' checked/created. Duration: 0.0003s
+2026-06-27 07:11:45,672 - database - DEBUG - Table 'tasks' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,673 - database - DEBUG - Table 'promocodes' checked/created. Duration: 0.0003s
+2026-06-27 07:11:45,673 - database - DEBUG - Table 'channels' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,673 - database - DEBUG - Table 'special_links' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,674 - database - DEBUG - Table 'sponsor_buttons' checked/created. Duration: 0.0003s
+2026-06-27 07:11:45,674 - database - DEBUG - Table 'spent_stars' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,674 - database - DEBUG - Table 'special_link_visits' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,675 - database - DEBUG - Table 'block_status' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,675 - database - DEBUG - Table 'completed_tasks' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,675 - database - DEBUG - Table 'used_promocodes' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,676 - database - DEBUG - Table 'config' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,676 - database - DEBUG - Table 'withdraw_requests' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,676 - database - DEBUG - Table 'daily_withdrawals' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,676 - database - DEBUG - Table 'game_history' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,677 - database - DEBUG - Table 'user_active_boosts' checked/created. Duration: 0.0002s
+2026-06-27 07:11:45,678 - database - DEBUG - Index 'idx_user_active_boosts_user_id_expiration' checked/created. Duration: 0.0006s
+2026-06-27 07:11:45,678 - database - DEBUG - Index 'idx_user_active_boosts_user_id_boost_key_active' checked/created. Duration: 0.0004s
+2026-06-27 07:11:45,679 - database - INFO - Проверка таблиц и индексов PostgreSQL завершена. Duration: 0.0080s
+2026-06-27 07:11:45,679 - root - INFO - Database pool initialized.
+2026-06-27 07:11:45,679 - root - INFO - Setting webhook: https://starsspin.fun/webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:45,810 - root - INFO - Webhook URL already matches.
+2026-06-27 07:11:45,810 - root - INFO - Starting Pyrogram client...
+2026-06-27 07:11:46,278 - root - INFO - Pyrogram client started as @riskant_pubg
+2026-06-27 07:11:46,280 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:46,281 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:46,281 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:46,281 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:46,281 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:46,281 - scheduler - INFO - Starting APScheduler...
+2026-06-27 07:11:46,282 - apscheduler.scheduler - INFO - Added job "update_rewards" to job store "default"
+2026-06-27 07:11:46,282 - apscheduler.scheduler - INFO - Added job "check_inactive_users_task" to job store "default"
+2026-06-27 07:11:46,282 - apscheduler.scheduler - INFO - Added job "check_channels_for_deletion_task" to job store "default"
+2026-06-27 07:11:46,282 - apscheduler.scheduler - INFO - Added job "daily_top_referrer_award_task" to job store "default"
+2026-06-27 07:11:46,282 - apscheduler.scheduler - INFO - Added job "cleanup_abandoned_spins" to job store "default"
+2026-06-27 07:11:46,282 - apscheduler.scheduler - INFO - Scheduler started
+2026-06-27 07:11:46,282 - scheduler - INFO - APScheduler started successfully.
+2026-06-27 07:11:46,283 - root - CRITICAL - Startup process finished.
+2026-06-27 07:11:46,283 - root - CRITICAL - Executing on_shutdown...
+2026-06-27 07:11:46,283 - root - INFO - Attempting to delete webhook...
+2026-06-27 07:11:46,284 - root - INFO - Webhook deleted.
+2026-06-27 07:11:46,284 - root - INFO - Stopping Pyrogram client...
+2026-06-27 07:11:46,287 - root - INFO - Pyrogram client stopped.
+2026-06-27 07:11:46,287 - root - INFO - Closing PostgreSQL connection pool...
+2026-06-27 07:11:46,287 - database - INFO - Закрытие пула соединений asyncpg...
+2026-06-27 07:11:46,289 - database - INFO - Пул соединений asyncpg закрыт.
+2026-06-27 07:11:46,289 - root - INFO - Closing FSM storage...
+2026-06-27 07:11:46,289 - root - INFO - FSM storage closed.
+2026-06-27 07:11:46,289 - root - INFO - Closing bot session...
+2026-06-27 07:11:46,490 - root - INFO - Bot session closed.
+2026-06-27 07:11:46,490 - root - CRITICAL - Shutdown process complete.
+2026-06-27 07:11:46,491 - root - ERROR - !!! FAILED RUN AIOHTTP (OSError): [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use - Port 8080 busy?
+Traceback (most recent call last):
+  File "/root/Zvezdopad/main.py", line 300, in main
+    aiohttp_web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT, access_log=None)
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web.py", line 502, in run_app
+    loop.run_until_complete(main_task)
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web.py", line 404, in _run_app
+    await site.start()
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web_runner.py", line 138, in start
+    self._server = await loop.create_server(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use
+2026-06-27 07:11:52,625 - root - INFO - File logging (DEBUG level) configured to: info.log
+2026-06-27 07:11:52,625 - root - CRITICAL - Logging configured. Base level: DEBUG, File (Error): ERROR, File (Info): DEBUG.
+2026-06-27 07:11:52,625 - root - CRITICAL - --- SCRIPT main.py STARTED ---
+2026-06-27 07:11:52,625 - root - INFO - Webhook path: /webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:52,625 - root - INFO - Webhook full URL: https://starsspin.fun/webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:52,626 - root - INFO - Initializing Aiogram Bot and Dispatcher...
+2026-06-27 07:11:52,641 - root - INFO - Aiogram initialized.
+2026-06-27 07:11:52,641 - root - INFO - Pyrogram client initialized.
+2026-06-27 07:11:52,641 - root - INFO - Registering Aiogram handlers...
+2026-06-27 07:11:52,641 - handlers - INFO - Registering all handlers for main bot...
+2026-06-27 07:11:52,642 - handlers.webapp - INFO - WebApp data handler registered (handles non-spin actions).
+2026-06-27 07:11:52,642 - handlers.common - INFO - Common handlers registered.
+2026-06-27 07:11:52,643 - handlers.user_commands - INFO - User command handlers registered.
+2026-06-27 07:11:52,644 - handlers.user_menu - INFO - User menu handlers registered (main bot).
+2026-06-27 07:11:52,644 - handlers.user_tasks - INFO - User task handlers registered successfully.
+2026-06-27 07:11:52,644 - handlers.user_farm - INFO - User farming handlers registered.
+2026-06-27 07:11:52,645 - handlers.user_games - INFO - User game handlers registered.
+2026-06-27 07:11:52,645 - handlers.user_withdrawal - INFO - User withdrawal handlers registered.
+2026-06-27 07:11:52,646 - handlers.admin_panel - INFO - Admin panel handlers registered.
+2026-06-27 07:11:52,648 - handlers.admin_users - INFO - Admin user management handlers registered.
+2026-06-27 07:11:52,649 - handlers.admin_broadcast - INFO - Admin broadcast handlers registered.
+2026-06-27 07:11:52,651 - handlers.admin_channels - INFO - Admin channel management handlers registered.
+2026-06-27 07:11:52,652 - handlers.admin_tasks - INFO - Admin task management handlers registered.
+2026-06-27 07:11:52,652 - handlers.admin_promocodes - INFO - Admin promocode management handlers registered.
+2026-06-27 07:11:52,653 - handlers.admin_op - INFO - Admin OP management handlers registered.
+2026-06-27 07:11:52,654 - handlers.admin_withdrawal - INFO - Admin withdrawal handlers registered.
+2026-06-27 07:11:52,655 - handlers.admin_direct_message - INFO - Admin direct message handlers registered.
+2026-06-27 07:11:52,655 - handlers.admin_other - INFO - Admin other handlers (including direct message) registered.
+2026-06-27 07:11:52,656 - handlers.admin_limits - INFO - Admin limits management handlers registered.
+2026-06-27 07:11:52,656 - handlers.admin_maintenance - INFO - Admin maintenance handlers registered.
+2026-06-27 07:11:52,656 - handlers.inline_query - INFO - Inline query handler registered.
+2026-06-27 07:11:52,657 - handlers - INFO - All main bot handlers registered.
+2026-06-27 07:11:52,657 - root - INFO - Aiogram handlers registered.
+2026-06-27 07:11:52,657 - root - INFO - Creating aiohttp web application...
+2026-06-27 07:11:52,657 - root - INFO - aiohttp application created.
+2026-06-27 07:11:52,657 - root - INFO - Configuring static file serving...
+2026-06-27 07:11:52,657 - root - INFO - Static files root: /root/Zvezdopad/static_webapp
+2026-06-27 07:11:52,657 - root - INFO - Static routes configured.
+2026-06-27 07:11:52,657 - root - INFO - Registering API routes...
+2026-06-27 07:11:52,657 - root - INFO - API routes registered.
+2026-06-27 07:11:52,657 - root - INFO - Configuring Aiogram webhook handler: /webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:52,658 - root - INFO - Aiogram webhook configured.
+2026-06-27 07:11:52,658 - root - INFO - on_startup/on_shutdown handlers registered.
+2026-06-27 07:11:52,658 - root - INFO - Starting aiohttp web server 0.0.0.0:8080
+2026-06-27 07:11:52,658 - asyncio - DEBUG - Using selector: EpollSelector
+2026-06-27 07:11:52,659 - root - CRITICAL - Executing on_startup...
+2026-06-27 07:11:52,685 - database - INFO - Пул соединений asyncpg инициализирован (1-50 соединений). Duration: 0.0258s
+2026-06-27 07:11:52,685 - database - INFO - Проверка/создание таблиц и индексов PostgreSQL...
+2026-06-27 07:11:52,686 - database - DEBUG - Table 'users' checked/created. Duration: 0.0008s
+2026-06-27 07:11:52,687 - database - DEBUG - Table 'robberies' checked/created. Duration: 0.0003s
+2026-06-27 07:11:52,687 - database - DEBUG - Table 'custom_rewards' checked/created. Duration: 0.0003s
+2026-06-27 07:11:52,687 - database - DEBUG - Table 'tasks' checked/created. Duration: 0.0003s
+2026-06-27 07:11:52,688 - database - DEBUG - Table 'promocodes' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,688 - database - DEBUG - Table 'channels' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,688 - database - DEBUG - Table 'special_links' checked/created. Duration: 0.0001s
+2026-06-27 07:11:52,688 - database - DEBUG - Table 'sponsor_buttons' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,689 - database - DEBUG - Table 'spent_stars' checked/created. Duration: 0.0003s
+2026-06-27 07:11:52,689 - database - DEBUG - Table 'special_link_visits' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,689 - database - DEBUG - Table 'block_status' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,690 - database - DEBUG - Table 'completed_tasks' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,690 - database - DEBUG - Table 'used_promocodes' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,690 - database - DEBUG - Table 'config' checked/created. Duration: 0.0001s
+2026-06-27 07:11:52,690 - database - DEBUG - Table 'withdraw_requests' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,691 - database - DEBUG - Table 'daily_withdrawals' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,691 - database - DEBUG - Table 'game_history' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,691 - database - DEBUG - Table 'user_active_boosts' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,692 - database - DEBUG - Index 'idx_user_active_boosts_user_id_expiration' checked/created. Duration: 0.0006s
+2026-06-27 07:11:52,692 - database - DEBUG - Index 'idx_user_active_boosts_user_id_boost_key_active' checked/created. Duration: 0.0002s
+2026-06-27 07:11:52,693 - database - INFO - Проверка таблиц и индексов PostgreSQL завершена. Duration: 0.0077s
+2026-06-27 07:11:52,693 - root - INFO - Database pool initialized.
+2026-06-27 07:11:52,693 - root - INFO - Setting webhook: https://starsspin.fun/webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:52,832 - root - INFO - Webhook URL already matches.
+2026-06-27 07:11:52,833 - root - INFO - Starting Pyrogram client...
+2026-06-27 07:11:53,386 - root - INFO - Pyrogram client started as @riskant_pubg
+2026-06-27 07:11:53,389 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:53,389 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:53,389 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:53,390 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:53,390 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:11:53,390 - scheduler - INFO - Starting APScheduler...
+2026-06-27 07:11:53,391 - apscheduler.scheduler - INFO - Added job "update_rewards" to job store "default"
+2026-06-27 07:11:53,391 - apscheduler.scheduler - INFO - Added job "check_inactive_users_task" to job store "default"
+2026-06-27 07:11:53,391 - apscheduler.scheduler - INFO - Added job "check_channels_for_deletion_task" to job store "default"
+2026-06-27 07:11:53,391 - apscheduler.scheduler - INFO - Added job "daily_top_referrer_award_task" to job store "default"
+2026-06-27 07:11:53,391 - apscheduler.scheduler - INFO - Added job "cleanup_abandoned_spins" to job store "default"
+2026-06-27 07:11:53,391 - apscheduler.scheduler - INFO - Scheduler started
+2026-06-27 07:11:53,391 - scheduler - INFO - APScheduler started successfully.
+2026-06-27 07:11:53,391 - root - CRITICAL - Startup process finished.
+2026-06-27 07:11:53,392 - root - CRITICAL - Executing on_shutdown...
+2026-06-27 07:11:53,392 - root - INFO - Attempting to delete webhook...
+2026-06-27 07:11:53,392 - root - INFO - Webhook deleted.
+2026-06-27 07:11:53,392 - root - INFO - Stopping Pyrogram client...
+2026-06-27 07:11:53,395 - root - INFO - Pyrogram client stopped.
+2026-06-27 07:11:53,395 - root - INFO - Closing PostgreSQL connection pool...
+2026-06-27 07:11:53,395 - database - INFO - Закрытие пула соединений asyncpg...
+2026-06-27 07:11:53,397 - database - INFO - Пул соединений asyncpg закрыт.
+2026-06-27 07:11:53,397 - root - INFO - Closing FSM storage...
+2026-06-27 07:11:53,397 - root - INFO - FSM storage closed.
+2026-06-27 07:11:53,397 - root - INFO - Closing bot session...
+2026-06-27 07:11:53,598 - root - INFO - Bot session closed.
+2026-06-27 07:11:53,598 - root - CRITICAL - Shutdown process complete.
+2026-06-27 07:11:53,599 - root - ERROR - !!! FAILED RUN AIOHTTP (OSError): [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use - Port 8080 busy?
+Traceback (most recent call last):
+  File "/root/Zvezdopad/main.py", line 300, in main
+    aiohttp_web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT, access_log=None)
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web.py", line 502, in run_app
+    loop.run_until_complete(main_task)
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web.py", line 404, in _run_app
+    await site.start()
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web_runner.py", line 138, in start
+    self._server = await loop.create_server(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use
+2026-06-27 07:11:59,787 - root - INFO - File logging (DEBUG level) configured to: info.log
+2026-06-27 07:11:59,787 - root - CRITICAL - Logging configured. Base level: DEBUG, File (Error): ERROR, File (Info): DEBUG.
+2026-06-27 07:11:59,787 - root - CRITICAL - --- SCRIPT main.py STARTED ---
+2026-06-27 07:11:59,787 - root - INFO - Webhook path: /webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:59,787 - root - INFO - Webhook full URL: https://starsspin.fun/webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:59,787 - root - INFO - Initializing Aiogram Bot and Dispatcher...
+2026-06-27 07:11:59,813 - root - INFO - Aiogram initialized.
+2026-06-27 07:11:59,815 - root - INFO - Pyrogram client initialized.
+2026-06-27 07:11:59,815 - root - INFO - Registering Aiogram handlers...
+2026-06-27 07:11:59,815 - handlers - INFO - Registering all handlers for main bot...
+2026-06-27 07:11:59,815 - handlers.webapp - INFO - WebApp data handler registered (handles non-spin actions).
+2026-06-27 07:11:59,815 - handlers.common - INFO - Common handlers registered.
+2026-06-27 07:11:59,817 - handlers.user_commands - INFO - User command handlers registered.
+2026-06-27 07:11:59,818 - handlers.user_menu - INFO - User menu handlers registered (main bot).
+2026-06-27 07:11:59,819 - handlers.user_tasks - INFO - User task handlers registered successfully.
+2026-06-27 07:11:59,819 - handlers.user_farm - INFO - User farming handlers registered.
+2026-06-27 07:11:59,819 - handlers.user_games - INFO - User game handlers registered.
+2026-06-27 07:11:59,819 - handlers.user_withdrawal - INFO - User withdrawal handlers registered.
+2026-06-27 07:11:59,821 - handlers.admin_panel - INFO - Admin panel handlers registered.
+2026-06-27 07:11:59,823 - handlers.admin_users - INFO - Admin user management handlers registered.
+2026-06-27 07:11:59,825 - handlers.admin_broadcast - INFO - Admin broadcast handlers registered.
+2026-06-27 07:11:59,828 - handlers.admin_channels - INFO - Admin channel management handlers registered.
+2026-06-27 07:11:59,828 - handlers.admin_tasks - INFO - Admin task management handlers registered.
+2026-06-27 07:11:59,830 - handlers.admin_promocodes - INFO - Admin promocode management handlers registered.
+2026-06-27 07:11:59,831 - handlers.admin_op - INFO - Admin OP management handlers registered.
+2026-06-27 07:11:59,832 - handlers.admin_withdrawal - INFO - Admin withdrawal handlers registered.
+2026-06-27 07:11:59,835 - handlers.admin_direct_message - INFO - Admin direct message handlers registered.
+2026-06-27 07:11:59,835 - handlers.admin_other - INFO - Admin other handlers (including direct message) registered.
+2026-06-27 07:11:59,835 - handlers.admin_limits - INFO - Admin limits management handlers registered.
+2026-06-27 07:11:59,836 - handlers.admin_maintenance - INFO - Admin maintenance handlers registered.
+2026-06-27 07:11:59,837 - handlers.inline_query - INFO - Inline query handler registered.
+2026-06-27 07:11:59,837 - handlers - INFO - All main bot handlers registered.
+2026-06-27 07:11:59,837 - root - INFO - Aiogram handlers registered.
+2026-06-27 07:11:59,837 - root - INFO - Creating aiohttp web application...
+2026-06-27 07:11:59,837 - root - INFO - aiohttp application created.
+2026-06-27 07:11:59,837 - root - INFO - Configuring static file serving...
+2026-06-27 07:11:59,837 - root - INFO - Static files root: /root/Zvezdopad/static_webapp
+2026-06-27 07:11:59,837 - root - INFO - Static routes configured.
+2026-06-27 07:11:59,837 - root - INFO - Registering API routes...
+2026-06-27 07:11:59,837 - root - INFO - API routes registered.
+2026-06-27 07:11:59,837 - root - INFO - Configuring Aiogram webhook handler: /webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:11:59,837 - root - INFO - Aiogram webhook configured.
+2026-06-27 07:11:59,837 - root - INFO - on_startup/on_shutdown handlers registered.
+2026-06-27 07:11:59,837 - root - INFO - Starting aiohttp web server 0.0.0.0:8080
+2026-06-27 07:11:59,837 - asyncio - DEBUG - Using selector: EpollSelector
+2026-06-27 07:11:59,840 - root - CRITICAL - Executing on_startup...
+2026-06-27 07:11:59,877 - database - INFO - Пул соединений asyncpg инициализирован (1-50 соединений). Duration: 0.0368s
+2026-06-27 07:11:59,877 - database - INFO - Проверка/создание таблиц и индексов PostgreSQL...
+2026-06-27 07:11:59,878 - database - DEBUG - Table 'users' checked/created. Duration: 0.0006s
+2026-06-27 07:11:59,879 - database - DEBUG - Table 'robberies' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,879 - database - DEBUG - Table 'custom_rewards' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,879 - database - DEBUG - Table 'tasks' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,880 - database - DEBUG - Table 'promocodes' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,880 - database - DEBUG - Table 'channels' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,880 - database - DEBUG - Table 'special_links' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,881 - database - DEBUG - Table 'sponsor_buttons' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,881 - database - DEBUG - Table 'spent_stars' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,881 - database - DEBUG - Table 'special_link_visits' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,881 - database - DEBUG - Table 'block_status' checked/created. Duration: 0.0001s
+2026-06-27 07:11:59,882 - database - DEBUG - Table 'completed_tasks' checked/created. Duration: 0.0003s
+2026-06-27 07:11:59,882 - database - DEBUG - Table 'used_promocodes' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,882 - database - DEBUG - Table 'config' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,883 - database - DEBUG - Table 'withdraw_requests' checked/created. Duration: 0.0003s
+2026-06-27 07:11:59,883 - database - DEBUG - Table 'daily_withdrawals' checked/created. Duration: 0.0001s
+2026-06-27 07:11:59,883 - database - DEBUG - Table 'game_history' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,884 - database - DEBUG - Table 'user_active_boosts' checked/created. Duration: 0.0002s
+2026-06-27 07:11:59,884 - database - DEBUG - Index 'idx_user_active_boosts_user_id_expiration' checked/created. Duration: 0.0005s
+2026-06-27 07:11:59,885 - database - DEBUG - Index 'idx_user_active_boosts_user_id_boost_key_active' checked/created. Duration: 0.0003s
+2026-06-27 07:11:59,885 - database - INFO - Проверка таблиц и индексов PostgreSQL завершена. Duration: 0.0077s
+2026-06-27 07:11:59,885 - root - INFO - Database pool initialized.
+2026-06-27 07:11:59,885 - root - INFO - Setting webhook: https://starsspin.fun/webhook/8610911034:AAHXiHwTQp-JmPSfyfzICxyB26hYq_5NxTs
+2026-06-27 07:12:00,028 - root - INFO - Webhook URL already matches.
+2026-06-27 07:12:00,028 - root - INFO - Starting Pyrogram client...
+2026-06-27 07:12:00,500 - root - INFO - Pyrogram client started as @riskant_pubg
+2026-06-27 07:12:00,503 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:12:00,503 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:12:00,503 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:12:00,504 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:12:00,504 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-06-27 07:12:00,504 - scheduler - INFO - Starting APScheduler...
+2026-06-27 07:12:00,504 - apscheduler.scheduler - INFO - Added job "update_rewards" to job store "default"
+2026-06-27 07:12:00,505 - apscheduler.scheduler - INFO - Added job "check_inactive_users_task" to job store "default"
+2026-06-27 07:12:00,505 - apscheduler.scheduler - INFO - Added job "check_channels_for_deletion_task" to job store "default"
+2026-06-27 07:12:00,505 - apscheduler.scheduler - INFO - Added job "daily_top_referrer_award_task" to job store "default"
+2026-06-27 07:12:00,506 - apscheduler.scheduler - INFO - Added job "cleanup_abandoned_spins" to job store "default"
+2026-06-27 07:12:00,506 - apscheduler.scheduler - INFO - Scheduler started
+2026-06-27 07:12:00,506 - scheduler - INFO - APScheduler started successfully.
+2026-06-27 07:12:00,506 - root - CRITICAL - Startup process finished.
+2026-06-27 07:12:00,506 - root - CRITICAL - Executing on_shutdown...
+2026-06-27 07:12:00,506 - root - INFO - Attempting to delete webhook...
+2026-06-27 07:12:00,506 - root - INFO - Webhook deleted.
+2026-06-27 07:12:00,506 - root - INFO - Stopping Pyrogram client...
+2026-06-27 07:12:00,510 - root - INFO - Pyrogram client stopped.
+2026-06-27 07:12:00,510 - root - INFO - Closing PostgreSQL connection pool...
+2026-06-27 07:12:00,510 - database - INFO - Закрытие пула соединений asyncpg...
+2026-06-27 07:12:00,512 - database - INFO - Пул соединений asyncpg закрыт.
+2026-06-27 07:12:00,512 - root - INFO - Closing FSM storage...
+2026-06-27 07:12:00,512 - root - INFO - FSM storage closed.
+2026-06-27 07:12:00,512 - root - INFO - Closing bot session...
+2026-06-27 07:12:00,713 - root - INFO - Bot session closed.
+2026-06-27 07:12:00,713 - root - CRITICAL - Shutdown process complete.
+2026-06-27 07:12:00,714 - root - ERROR - !!! FAILED RUN AIOHTTP (OSError): [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use - Port 8080 busy?
+Traceback (most recent call last):
+  File "/root/Zvezdopad/main.py", line 300, in main
+    aiohttp_web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT, access_log=None)
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web.py", line 502, in run_app
+    loop.run_until_complete(main_task)
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web.py", line 404, in _run_app
+    await site.start()
+  File "/root/Zvezdopad/venv/lib/python3.12/site-packages/aiohttp/web_runner.py", line 138, in start
+    self._server = await loop.create_server(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1572, in create_server
+    raise OSError(err.errno, msg) from None
+OSError: [Errno 98] error while attempting to bind on address ('0.0.0.0', 8080): address already in use

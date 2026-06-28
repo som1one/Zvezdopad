@@ -1,0 +1,1 @@
+2026-06-22 00:01:00.140518	[400 BALANCE_TOO_LOW]	payments.SendStarsForm

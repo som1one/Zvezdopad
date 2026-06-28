@@ -1,0 +1,20 @@
+[0;1;32m●[0m zvezdopad.service - Zvezdopad Main Bot
+     Loaded: loaded (]8;;file://churka.ptr.network/etc/systemd/system/zvezdopad.service/etc/systemd/system/zvezdopad.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Sat 2026-06-27 12:00:37 UTC; 3min 22s ago
+   Main PID: 269880 (python3)
+      Tasks: 3 (limit: 2263)
+     Memory: 72.3M (peak: 72.7M)
+        CPU: 1.333s
+     CGroup: /system.slice/zvezdopad.service
+             └─[0;38;5;245m269880 /root/Zvezdopad/venv/bin/python3 main.py[0m
+
+Jun 27 12:02:27 churka.ptr.network python3[269880]: 2026-06-27 12:02:27,743 - utils - WARNING - Language for user 1140343340 not in cache. Using 'ru'. Call async get_user_lang elsewhere.
+Jun 27 12:02:27 churka.ptr.network python3[269880]: 2026-06-27 12:02:27,743 - utils - WARNING - Language for user 1140343340 not in cache. Using 'ru'. Call async get_user_lang elsewhere.
+Jun 27 12:02:27 churka.ptr.network python3[269880]: 2026-06-27 12:02:27,743 - utils - WARNING - Language for user 1140343340 not in cache. Using 'ru'. Call async get_user_lang elsewhere.
+Jun 27 12:02:27 churka.ptr.network python3[269880]: 2026-06-27 12:02:27,743 - utils - WARNING - Language for user 1140343340 not in cache. Using 'ru'. Call async get_user_lang elsewhere.
+Jun 27 12:02:27 churka.ptr.network python3[269880]: 2026-06-27 12:02:27,743 - utils - WARNING - Language for user 1140343340 not in cache. Using 'ru'. Call async get_user_lang elsewhere.
+Jun 27 12:02:27 churka.ptr.network python3[269880]: 2026-06-27 12:02:27,743 - utils - WARNING - Language for user 1140343340 not in cache. Using 'ru'. Call async get_user_lang elsewhere.
+Jun 27 12:02:27 churka.ptr.network python3[269880]: 2026-06-27 12:02:27,743 - utils - WARNING - Language for user 1140343340 not in cache. Using 'ru'. Call async get_user_lang elsewhere.
+Jun 27 12:02:39 churka.ptr.network python3[269880]: 2026-06-27 12:02:39,049 - apscheduler.executors.default - INFO - Running job "cleanup_abandoned_spins (trigger: interval[0:02:00], next run at: 2026-06-27 12:04:39 UTC)" (scheduled at 2026-06-27 12:02:39.048682+00:00)
+Jun 27 12:02:39 churka.ptr.network python3[269880]: 2026-06-27 12:02:39,049 - scheduler - DEBUG - No active spins for cleanup.
+Jun 27 12:02:39 churka.ptr.network python3[269880]: 2026-06-27 12:02:39,049 - apscheduler.executors.default - INFO - Job "cleanup_abandoned_spins (trigger: interval[0:02:00], next run at: 2026-06-27 12:04:39 UTC)" executed successfully

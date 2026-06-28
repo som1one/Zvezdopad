@@ -1,99 +1,96 @@
-# Содержимое файла: settings.py (Версия для VPS с доменом starswheelapp.fun)
 import os
+TOKEN = os.environ.get("BOT_TOKEN", "токен бота")
 
-# В MAIN.PY - НАЙДИТЕ ССЫЛКИ И ПОМЕНЯЙТЕ НА СВОИ! #
+# --- НОВОЕ: Настройки подключения к PostgreSQL ---
+PG_DBNAME = os.environ.get("PG_DBNAME", "zvezdopad_db")  # Имя вашей базы данных
+PG_USER = os.environ.get("PG_USER", "root")  # Имя пользователя БД
+PG_PASSWORD = os.environ.get("PG_PASSWORD", "2f7h2c3r")  # Пароль пользователя БД
+PG_HOST = os.environ.get("PG_HOST", "localhost")  # Хост БД (localhost, если БД на том же сервере)
+PG_PORT = os.environ.get("PG_PORT", "5432")  # Порт PostgreSQL (стандартный 5432)
+# Настройки пула соединений (можно добавить позже)
+PG_POOL_MIN_SIZE = int(os.environ.get("PG_POOL_MIN_SIZE", 1))
+PG_POOL_MAX_SIZE = int(os.environ.get("PG_POOL_MAX_SIZE", 50))
+# --------------------------------------------------
 
-TOKEN = os.environ.get('MAIN_BOT_TOKEN', '')  # токен-бота
+DONATE_PAY = 149
+DONATE_TIME = 15
 
-DONATE_PAY = 149  # сумма доната
-DONATE_TIME = 15  # время буста
-
-API_I = int(os.environ.get('API_ID', '123'))  # userbot для автовыдачи звёзд
-API_H = os.environ.get('API_HASH', '')  # userbot для автовыдачи звёзд
-
-LINK_1 = "https://t.me/"  # Основной канал
+# --- Pyrogram API ID и Hash (рекомендуется брать из окружения) ---
+API_I = int(os.environ.get("API_ID", "апи айди"))
+API_H = os.environ.get("API_HASH", "апи хэш")
+# ---------------------------------------------------------------
+PAYMENT_BOT_USERNAME = "юз бота для оплаты"
+LINK_1 = "https://t.me/"
 LINK_2 = "https://t.me/"  # Чат
 LINK_3 = "https://t.me/"  # Выплаты
 LINK_4 = "https://t.me/"  # Стата Мини-игр
 LINK_5 = "https://t.me/"  # Пост с отзывами
 
-USER_BOT = os.environ.get('MAIN_BOT_USERNAME', '')
-SUP_LOGIN = ""
-ADMIN_IDS = [int(x) for x in os.environ.get('ADMIN_IDS', '123').split(',') if x]  # id админов
-ADMIN_IDD = int(os.environ.get('ADMIN_IDS', '123').split(',')[0])
-LINK_BOT = f"https://t.me/{USER_BOT}?start={ADMIN_IDD}"  # ваша реферальная ссылка на бота
+USER_BOT = os.environ.get("BOT_USERNAME", 'zvezdopadtg_bot')  # Имя бота тоже лучше из окружения
+SUP_LOGIN = "юз поддержки"
+ADMIN_IDS_STR = os.environ.get("ADMIN_IDS", "айди админов")
+ADMIN_IDS = [int(admin_id.strip()) for admin_id in ADMIN_IDS_STR.split(',') if admin_id.strip().isdigit()]
 
-REF_VIVOD_MIN = 20  # Минимальное количество рефералов за неделю для вывода
+ADMIN_IDD = ADMIN_IDS[0] if ADMIN_IDS else None  # Используем первого админа для ссылки по умолчанию
+LINK_BOT = f"https://t.me/{USER_BOT}?start={ADMIN_IDD}" if ADMIN_IDD else f"https://t.me/{USER_BOT}"
 
-TELEGRAPH1 = "https://telegra.ph/Kak-polzovatsya-botom-07-20"  # Пример ссылки на гайд
-TELEGRAPH2 = "https://telegra.ph/Kak-vyvesti-zvezdy-07-21"  # Пример ссылки на гайд по выводу
+TELEGRAPH1 = "https://telegra.ph/Kak-polzovatsya-botom-07-20"
+TELEGRAPH2 = "https://telegra.ph/Kak-vyvesti-zvezdy-07-21"
 
-CHANEL_ID = int(os.environ.get('CHANEL_ID', '-100'))  # канал выплат (общий)
-NEWS_CHANEL_ID = int(os.environ.get('NEWS_CHANEL_ID', '-100'))  # новостной канал (общий)
-WIN_CHANEL_ID = int(os.environ.get('WIN_CHANEL_ID', '-100'))  # канал с выигрышами в мини-игре (общий)
-LOG_CH_USER = int(os.environ.get('LOG_CH_USER', '-100'))  # канал логов новых пользователей (админский)
-LOG_VER_USER = int(os.environ.get('LOG_VER_USER', '-100'))  # канал логов новых пользователей прошедших ОП (админский)
-LOG_VIVOD_CHANEL = int(os.environ.get('LOG_VIVOD_CHANEL', '-100'))  # канал логов с выводами (админский)
+CHANEL_ID_STR = os.environ.get("CHANEL_ID", "айди из env взять")  # <--- Каналы тоже лучше в окружение
+CHANEL_ID = int(CHANEL_ID_STR) if CHANEL_ID_STR.startswith('-') else CHANEL_ID_STR
 
-REQUEST_API_KEY = ''  # получить в https://t.me/subgram_officialbot?start=759768292
-SUBGRAM_BOT_API_KEY = os.environ.get('SUBGRAM_BOT_API_KEY', os.environ.get('SUBGRAM_API_KEY', ''))  # Ключ бота SubGram для /get-sponsors
-FLYER_API_KEY = os.environ.get('FLYER_API_KEY', '')  # Ключ FlyerBot для заданий
-REQUEST_OP_DELAY_HOURS = 0  # Задержка перед проверкой ОП в часах
-REQUEST_OP_DELAY_MINUTES = 0  # Задержка перед проверкой ОП в минутах
+NEWS_CHANEL_ID_STR = os.environ.get("NEWS_CHANEL_ID", "айди из env взять")
+NEWS_CHANEL_ID = int(NEWS_CHANEL_ID_STR) if NEWS_CHANEL_ID_STR.startswith('-') else NEWS_CHANEL_ID_STR
 
-# Награды (стандартные)
-MIN_GIFT = 1.0  # Ежедневный подарок мин
-MAX_GIFT = 2.0  # Ежедневный подарок макс
+WIN_CHANEL_ID_STR = os.environ.get("WIN_CHANEL_ID", "айди из env взять")
+WIN_CHANEL_ID = int(WIN_CHANEL_ID_STR) if WIN_CHANEL_ID_STR.startswith('-') else WIN_CHANEL_ID_STR
 
-MIN_REF_REWARD = 1.0  # Награда за реферала мин
-MAX_REF_REWARD = 1.0  # Награда за реферала макс
+LOG_CH_USER_STR = os.environ.get("LOG_CH_USER", "айди из env взять")
+LOG_CH_USER = int(LOG_CH_USER_STR) if LOG_CH_USER_STR.startswith('-') else LOG_CH_USER_STR
 
-CLICK_MIN_REWARD = 0.5  # Награда за клик мин
-CLICK_MAX_REWARD = 3.00  # Награда за клик макс
+LOG_VER_USER_STR = os.environ.get("LOG_VER_USER", "айди из env взять")
+LOG_VER_USER = int(LOG_VER_USER_STR) if LOG_VER_USER_STR.startswith('-') else LOG_VER_USER_STR
 
-# Награды во время "Счастливого часа"
-MIN_GIFT_L = 1.0  # Подарок счастливый час мин
-MAX_GIFT_L = 2.0  # Подарок счастливый час макс
+LOG_VIVOD_CHANEL_STR = os.environ.get("LOG_VIVOD_CHANEL", "айди из env взять")
+LOG_VIVOD_CHANEL = int(LOG_VIVOD_CHANEL_STR) if LOG_VIVOD_CHANEL_STR.startswith('-') else LOG_VIVOD_CHANEL_STR
 
-MIN_REF_REWARD_X2 = 2.0  # Реферал счастливый час мин
-MAX_REF_REWARD_X2 = 2.0  # Реферал счастливый час макс
+REQUEST_API_KEY = os.environ.get("SUBGRAM_API_KEY",
+                                 'ключ сабграм')  # Ключ SubGram
+REQUEST_OP_DELAY_HOURS = 0
+REQUEST_OP_DELAY_MINUTES = 0
 
-CLICK_MIN_REWARD_X2 = 0.20  # Клик счастливый час мин
-CLICK_MAX_REWARD_X2 = 2.00  # Клик счастливый час макс
+MIN_GIFT = 1.0
+MAX_GIFT = 2.0
+MIN_REF_REWARD = 1.0
+MAX_REF_REWARD = 1.0
+CLICK_MIN_REWARD = 0.5
+CLICK_MAX_REWARD = 3.00
 
-# Защита от автокликеров
-CLICK_COOLDOWN_DAY = 240  # Кулдаун клика днём (секунды)
-CLICK_COOLDOWN_NIGHT = 600  # Кулдаун клика ночью (секунды) — увеличенный
-NIGHT_HOURS_START = 0  # Начало "ночного" периода (UTC, часы)
-NIGHT_HOURS_END = 6  # Конец "ночного" периода (UTC, часы)
-CAPTCHA_EVERY_N_CLICKS = 5  # Сколько свободных кликов до капчи+кулдауна
-CAPTCHA_TIMEOUT_SECONDS = 60  # Время на ответ капчи (секунды)
+MIN_GIFT_L = 1.0
+MAX_GIFT_L = 2.0
+MIN_REF_REWARD_X2 = 2.0
+MAX_REF_REWARD_X2 = 2.0
+CLICK_MIN_REWARD_X2 = 0.20
+CLICK_MAX_REWARD_X2 = 2.00
 
 # Игры
-WIN_CHANCE = 25  # Шанс победы в "Все или ничего" (%)
+WIN_CHANCE = 25
 
 # Языки
-AVAILABLE_LANGS = ['ru']  # Список доступных языков
+AVAILABLE_LANGS = ['ru']
 
-# Колесо Фортуны
-FREE_SPIN_COOLDOWN_SECONDS = 24 * 60 * 60  # Кулдаун бесплатного спина (24 часа в секундах)
+WHEEL_WEBAPP_URL = "https://starswheelapp.fun/"
 
-WHEEL_WEBAPP_URL = "https://starswheelapp.fun/"  # URL для открытия Mini App
-
-# --- Webhook Settings ---
-# Домен, на котором будет доступен бот (публичный HTTPS URL)
-
-WEBHOOK_HOST = "https://starswheelapp.fun"
-
+FREE_SPIN_COOLDOWN_SECONDS = 24 * 60 * 60
 FREE_SPIN_COST_EQUIVALENT = 25
-# Токен добавится автоматически в main.py
+
+
+WEBHOOK_HOST = os.environ.get("WEBHOOK_HOST", "https://starswheelapp.fun")
 WEBHOOK_PATH_PREFIX = "/webhook"
 
-# Настройки встроенного веб-сервера aiogram (на чем слушает сам Python скрипт)
-WEBAPP_HOST = "localhost"  # Слушаем локально (IIS будет проксировать)
-WEBAPP_PORT = 8080  # Внутренний порт для main.py (должен совпадать с Rewrite URL в IIS)
-
-# В MAIN.PY - НАЙДИТЕ ССЫЛКИ И ПОМЕНЯЙТЕ НА СВОИ! #
+WEBAPP_HOST = os.environ.get("WEBAPP_HOST", "localhost")  # Слушаем локально
+WEBAPP_PORT = int(os.environ.get("WEBAPP_PORT", "8080"))  # Порт для aiohttp
 
 AVAILABLE_DAILY_GIFTS = {
     "🧸 Мишка (15⭐)": 5170233102089322756,
@@ -109,5 +106,6 @@ AVAILABLE_DAILY_GIFTS = {
     "💎 Алмаз (100⭐)": 5170521118301225164,
     "🕯 Cвеча (350⭐)": 5782984811920491178,
 }
-
 DEFAULT_DAILY_GIFT_KEY = "🧸 Мишка (15⭐)"
+
+FLYER_API_KEY = os.environ.get('FLYER_API_KEY', '')  # Ключ FlyerBot для заданий

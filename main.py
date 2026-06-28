@@ -22,6 +22,7 @@ from scheduler import setup_scheduler
 from handlers import register_all_handlers
 from handlers.user_donations import log as user_donations_log
 from handlers.api import (
+    handle_maintenance_status,
     handle_options, handle_start_spin, handle_confirm_spin_action,
     handle_get_user_state, handle_get_game_history, handle_play_luck_game,
     handle_attempt_robbery, handle_play_slots
@@ -284,6 +285,8 @@ def main():
     app.router.add_post('/api/attempt_robbery', handle_attempt_robbery)
     app.router.add_route('OPTIONS', '/api/attempt_robbery', handle_options)
     app.router.add_post('/api/play_slots', handle_play_slots)
+    app.router.add_get('/api/maintenance_status', handle_maintenance_status)
+    app.router.add_route('OPTIONS', '/api/maintenance_status', handle_options)
     app.router.add_route('OPTIONS', '/api/play_slots', handle_options)
     logging.info("API routes registered.")
 

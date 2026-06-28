@@ -1113,3 +1113,14 @@ async def handle_play_slots(request: web.Request):
         return web.json_response({'ok': False, 'error': str(ve)}, status=400, headers=headers)
     except Exception as e:
         return web.json_response({'ok': False, 'error': 'Внутренняя ошибка сервера'}, status=500, headers=headers)
+
+
+async def handle_maintenance_status(request):
+    from aiohttp import web
+    import database
+    try:
+        is_maint = await database.is_maintenance_mode()
+        msg = await database.get_maintenance_message() if is_maint else ""
+        return web.json_response({"maintenance": is_maint, "message": msg})
+    except Exception as e:
+        return web.json_response({"maintenance": False, "message": ""})
