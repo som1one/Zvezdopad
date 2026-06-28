@@ -154,6 +154,7 @@ async def handle_flyer_check_all(call: CallbackQuery, bot: Bot):
     completed_count = 0
     total_reward = 0.0
     not_done = []
+    not_done_tasks = []
 
     for task in tasks:
         signature = task.get("signature", "")
@@ -174,6 +175,12 @@ async def handle_flyer_check_all(call: CallbackQuery, bot: Bot):
                 log.exception(f"Error adding stars for flyer task: {e}")
         else:
             not_done.append(task.get("name", "?"))
+            not_done_tasks.append(task)
+
+    try:
+        await call.message.delete()
+    except (MessageCantBeDeleted, MessageToDeleteNotFound):
+        pass
 
     try:
         await call.message.delete()
@@ -185,24 +192,25 @@ async def handle_flyer_check_all(call: CallbackQuery, bot: Bot):
             f"\u2705 \u0412\u0441\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u044b!\n\U0001f4b0 \u041d\u0430\u0433\u0440\u0430\u0434\u0430: +{total_reward:.2f} \u2b50",
             reply_markup=InlineKeyboardMarkup().add(create_back_button(user_id))
         )
-    elif completed_count > 0:
-        markup = InlineKeyboardMarkup(row_width=1)
-        markup.add(InlineKeyboardButton("\U0001f504 \u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0441\u043d\u043e\u0432\u0430", callback_data="flyer_tasks"))
-        markup.add(create_back_button(user_id))
-        not_done_text = ", ".join(not_done[:3])
-        await call.message.answer(
-            f"\u2705 \u0412\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u043e: {completed_count} | +{total_reward:.2f} \u2b50\n"
-            f"\u274c \u041d\u0435 \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u043e: {not_done_text}",
-            reply_markup=markup
-        )
     else:
+        # Show remaining incomplete tasks as buttons
         markup = InlineKeyboardMarkup(row_width=1)
-        markup.add(InlineKeyboardButton("\U0001f504 \u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0441\u043d\u043e\u0432\u0430", callback_data="flyer_tasks"))
+        for nd_task in not_done_tasks:
+            nd_name = nd_task.get("name", "?")
+            nd_links = nd_task.get("links", [])
+            nd_type = nd_task.get("task", "")
+            nd_emoji = "\U0001f4e2" if "channel" in nd_type else "\U0001f916"
+            if nd_links:
+                markup.add(InlineKeyboardButton(f"{nd_emoji} {nd_name[:40]}", url=nd_links[0]))
+        
+        text = ""
+        if completed_count > 0:
+            text += f"\u2705 \u0412\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u043e: {completed_count} | +{total_reward:.2f} \u2b50\n\n"
+        text += "\u274c \u041e\u0441\u0442\u0430\u043b\u0438\u0441\u044c \u043d\u0435\u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u043d\u044b\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f:"
+        
+        markup.add(InlineKeyboardButton("\u2705 \u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0441\u043d\u043e\u0432\u0430", callback_data="flycheck_all"))
         markup.add(create_back_button(user_id))
-        await call.message.answer(
-            "\u274c \u041d\u0438 \u043e\u0434\u043d\u043e \u0437\u0430\u0434\u0430\u043d\u0438\u0435 \u043d\u0435 \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u043e!\n\u041f\u043e\u0434\u043f\u0438\u0448\u0438\u0441\u044c \u043d\u0430 \u0432\u0441\u0435 \u043a\u0430\u043d\u0430\u043b\u044b/\u0431\u043e\u0442\u044b \u0438 \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439 \u0441\u043d\u043e\u0432\u0430.",
-            reply_markup=markup
-        )
+        await call.message.answer(text, reply_markup=markup, disable_web_page_preview=True)
 
 
 async def admin_set_flyer_reward(call: CallbackQuery, bot: Bot):
