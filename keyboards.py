@@ -232,6 +232,7 @@ async def create_admin_panel_markup(user_id: int) -> InlineKeyboardMarkup:  # Д
         InlineKeyboardButton(text="📋 Список заданий", callback_data="show_tasks")
     )
     admin_markup.add(InlineKeyboardButton(text="📊 Прогресс заданий", callback_data="taskslist"))
+    admin_markup.add(InlineKeyboardButton(text="💰 Награда FlyerBot", callback_data="admin_flyer_reward"))
 
     admin_markup.add(InlineKeyboardButton(text="--- Выплаты (старый механизм) ---", callback_data="no_action_withdraw"))
     admin_markup.row(
