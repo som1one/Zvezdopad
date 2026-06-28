@@ -50,6 +50,46 @@ async def flyer_check_task(signature: str) -> str | None:
         return None
 
 
+
+
+async def ensure_flyer_table():
+    pool = database.db_pool
+    if not pool:
+        return
+    async with pool.acquire() as conn:
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS flyer_completed (
+                user_id BIGINT NOT NULL,
+                signature TEXT NOT NULL,
+                completed_at TIMESTAMP DEFAULT NOW(),
+                reward REAL NOT NULL DEFAULT 0,
+                PRIMARY KEY (user_id, signature)
+            )
+        """)
+
+
+async def is_flyer_task_done(user_id: int, signature: str) -> bool:
+    pool = database.db_pool
+    if not pool:
+        return False
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "SELECT 1 FROM flyer_completed WHERE user_id=$1 AND signature=$2",
+            user_id, signature
+        )
+        return row is not None
+
+
+async def mark_flyer_task_done(user_id: int, signature: str, reward: float):
+    pool = database.db_pool
+    if not pool:
+        return
+    async with pool.acquire() as conn:
+        await conn.execute(
+            "INSERT INTO flyer_completed (user_id, signature, reward) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+            user_id, signature, reward
+        )
+
 async def get_flyer_reward_multiplier() -> float:
     try:
         val = await database.get_config_value("flyer_reward_multiplier", "1.0")
@@ -105,11 +145,25 @@ async def show_flyer_tasks(call: CallbackQuery, bot: Bot):
         await call.message.answer("\u2705 \u0412\u0441\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u044b! \u041d\u043e\u0432\u044b\u0435 \u043f\u043e\u044f\u0432\u044f\u0442\u0441\u044f \u043f\u043e\u0437\u0436\u0435.", reply_markup=back_markup)
         return
 
+    await ensure_flyer_table()
     multiplier = await get_flyer_reward_multiplier()
     markup = InlineKeyboardMarkup(row_width=1)
     total_reward = 0.0
 
+    # Filter out already completed tasks
+    pending_tasks = []
     for task in tasks:
+        sig = task.get("signature", "")
+        if sig and await is_flyer_task_done(user_id, sig):
+            continue
+        pending_tasks.append(task)
+
+    if not pending_tasks:
+        back_markup = InlineKeyboardMarkup().add(create_back_button(user_id))
+        await call.message.answer("\u2705 \u0412\u0441\u0435 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u044b! \u041d\u043e\u0432\u044b\u0435 \u043f\u043e\u044f\u0432\u044f\u0442\u0441\u044f \u043f\u043e\u0437\u0436\u0435.", reply_markup=back_markup)
+        return
+
+    for task in pending_tasks:
         name = task.get("name", "Zadanie")
         task_type = task.get("task", "")
         price = task.get("price", 0)
@@ -156,9 +210,13 @@ async def handle_flyer_check_all(call: CallbackQuery, bot: Bot):
     not_done = []
     not_done_tasks = []
 
+    await ensure_flyer_table()
     for task in tasks:
         signature = task.get("signature", "")
         if not signature:
+            continue
+        # Skip already rewarded tasks
+        if await is_flyer_task_done(user_id, signature):
             continue
         result = await flyer_check_task(signature)
         result_lower = result.lower() if isinstance(result, str) else ""
@@ -168,6 +226,7 @@ async def handle_flyer_check_all(call: CallbackQuery, bot: Bot):
             reward = round(price * multiplier, 2)
             try:
                 await database.add_stars(user_id, reward)
+                await mark_flyer_task_done(user_id, signature, reward)
                 completed_count += 1
                 total_reward += reward
                 log.info(f"User {user_id} completed flyer task {signature}. Reward: {reward}")
