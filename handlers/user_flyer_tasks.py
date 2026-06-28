@@ -152,7 +152,7 @@ async def handle_flyer_check(call: CallbackQuery, bot: Bot):
 
     result_lower = result.lower() if isinstance(result, str) else ""
 
-    if result_lower in ("subscribed", "completed", "done", "true", "success", "started"):
+    if result_lower in ("subscribed", "completed", "complete", "done", "true", "success", "started"):
         tasks = await flyer_get_tasks(user_id)
         price = 1.0
         if tasks:
